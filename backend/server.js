@@ -5,37 +5,55 @@ const admin = require('firebase-admin'); // Import Firebase Admin SDK
 const createFirestoreFunctions = require('./models/firestore'); // Import the factory function
 
 const app = express();
-const port = process.env.PORT || 5001; 
+const port = process.env.PORT || 5001; // Use dynamic port from environment or 5001 locally
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  /\.web\.app$/, // Allow Firebase Hosting domains
+  /\.firebaseapp\.com$/ // Allow Firebase Hosting domains
+];
+
 app.use(cors({
-  origin: true, 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.some(pattern => 
+      typeof pattern === 'string' ? pattern === origin : pattern.test(origin)
+    )) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true 
 }));
-app.use(express.json()); 
+app.use(express.json()); // for parsing application/json
 
 // --- Firebase Initialization ---
+const serviceAccountPath = './credentials/firebase-admin-key.json';
+
 try {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-    // Use JSON from Environment Variable (Recommended for Render)
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    // If we have the key in an environment variable (for production)
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
-    console.log('Firebase initialized using Environment Variable');
+    console.log('Firebase Admin SDK initialized using Environment Variable...');
   } else {
-    // Fallback to local file for development
-    const serviceAccountPath = './credentials/firebase-admin-key.json';
+    // For local development
     admin.initializeApp({
       credential: admin.credential.cert(require(serviceAccountPath))
     });
-    console.log('Firebase initialized using local file');
+    console.log('Firebase Admin SDK initialized using local file...');
   }
 } catch (error) {
   console.error('Firebase initialization error:', error);
 }
 
-const db = admin.firestore(); 
+const db = admin.firestore(); // Get a reference to the Firestore database
+
+// Create Firestore functions with the initialized db instance
 const firestore = createFirestoreFunctions(db);
 
 // --- Auth Endpoints ---
@@ -95,6 +113,7 @@ app.post('/api/login', async (req, res) => {
     res.status(401).json({ error: 'Unauthorized', details: error.message });
   }
 });
+
 
 // --- API Endpoints for Firestore ---
 app.get('/api/rooms', async (req, res) => {
@@ -200,9 +219,6 @@ app.delete('/api/bookings/:id', async (req, res) => {
   }
 });
 
-// Start the server (Required for Render)
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-module.exports = app;

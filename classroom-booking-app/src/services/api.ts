@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api'; // Using relative path for Vercel
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api'; 
 
 export async function getRooms() {
   const response = await fetch(`${API_BASE_URL}/rooms`);
