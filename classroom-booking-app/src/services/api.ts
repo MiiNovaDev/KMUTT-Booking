@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5001/api'; // Ensure this matches your backend port
+const API_BASE_URL = '/api'; // Using relative path for Vercel
 
 export async function getRooms() {
   const response = await fetch(`${API_BASE_URL}/rooms`);

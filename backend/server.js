@@ -290,17 +290,23 @@ app.delete('/api/bookings/:id', async (req, res) => {
 async function initializeServer() {
   try {
     // Firebase is initialized directly, no async connectDB needed here anymore.
-
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
+    if (process.env.NODE_ENV !== 'production') {
+      app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+      });
+    }
   } catch (error) {
     console.error('Failed to initialize server:', error.stack);
-    process.exit(1);
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1);
+    }
   }
 }
 
 initializeServer();
+
+// Export the app for Vercel
+module.exports = app;
 
 
 
