@@ -1,0 +1,35 @@
+.booking-container {
+  padding: 2.5rem 2rem;
+}
+
+.filter-card {
+  padding: 2.5rem;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  margin-bottom: 2.5rem;
+}
+
+.filter-card h3 {
+  color: var(--kmut-orange);
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.input-group-text {
+  background: var(--background-color);
+  border-right: 0;
+  border-color: var(--border-color);
+}
+
+.form-control, .form-select {
+  border-left: 0;
+  border-color: var(--border-color);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--kmut-orange);
+  box-shadow: 0 0 0 0.25rem rgba(var(--kmut-orange-rgb), 0.25);
+}

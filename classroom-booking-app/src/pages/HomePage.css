@@ -1,0 +1,98 @@
+.home-container {
+  padding: 2.5rem 2rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--kmut-orange);
+  margin-bottom: 0;
+}
+
+.btn-book-main {
+  background-color: var(--kmut-red);
+  border-color: var(--kmut-red);
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-book-main:hover {
+  background-color: #a70000; /* Darker red */
+  border-color: #a70000;
+}
+
+.quick-actions-card {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.quick-actions-card h2 {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.quick-action-btn:hover {
+  background-color: #e9ecef;
+  border-color: var(--kmut-orange);
+  color: var(--kmut-orange);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.quick-action-btn .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.quick-action-btn:hover .icon {
+  color: var(--kmut-orange);
+}
+
+.section-header {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--kmut-orange);
+  padding-bottom: 0.5rem;
+  display: inline-block; /* To make border-bottom fit content */
+}

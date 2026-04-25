@@ -1,0 +1,110 @@
+.calendar-container {
+  padding: 2.5rem 2rem;
+}
+
+.calendar-header {
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border-bottom: 2px solid var(--kmut-orange);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.calendar-navigation h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--kmut-red);
+  margin: 0;
+}
+
+.calendar-navigation .btn {
+  background-color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+  color: #fff;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.calendar-navigation .btn:hover {
+  background-color: var(--kmut-red);
+  border-color: var(--kmut-red);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.8rem; /* Increased gap */
+  background-color: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem; /* Increased border-radius */
+  padding: 1.5rem; /* Increased padding */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.calendar-day-header {
+  font-weight: bold;
+  text-align: center;
+  padding: 0.8rem; /* Increased padding */
+  background-color: var(--background-color);
+  border-bottom: 2px solid var(--kmut-red); /* More prominent border */
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.calendar-day {
+  border: 1px solid var(--border-color);
+  padding: 0.8rem; /* Increased padding */
+  min-height: 120px; /* Increased min-height */
+  background-color: #f8f9fa;
+  border-radius: 0.5rem; /* Increased border-radius */
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.calendar-day.today {
+  background-color: #fce4cc; /* Lighter orange for today */
+  border-color: var(--kmut-orange);
+  box-shadow: 0 0 0 2px var(--kmut-orange); /* Highlight border */
+}
+
+.calendar-day.today .calendar-day-number {
+  color: var(--kmut-red);
+}
+
+.calendar-day-number {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.calendar-booking-item {
+  font-size: 0.85rem;
+  background-color: var(--kmut-orange);
+  color: #fff;
+  padding: 0.3rem 0.5rem; /* Increased padding */
+  margin-bottom: 0.2rem;
+  border-radius: 0.3rem; /* Increased border-radius */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.calendar-booking-item:hover {
+  background-color: var(--kmut-red);
+}

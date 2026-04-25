@@ -1,0 +1,13 @@
+.all-rooms-container {
+  padding: 2.5rem 2rem;
+}
+
+.all-rooms-header {
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border-bottom: 2px solid var(--kmut-orange);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}

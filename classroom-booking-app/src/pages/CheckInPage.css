@@ -1,0 +1,78 @@
+.check-in-container {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+  background-color: #f0f2f5;
+}
+
+.check-in-card {
+  width: 100%;
+  max-width: 550px; /* Slightly wider */
+  padding: 2.5rem; /* Increased padding */
+  background-color: #fff;
+  border-radius: 0.75rem; /* Increased border-radius */
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* More prominent shadow */
+  text-align: center;
+}
+
+.check-in-card h2 {
+  color: var(--kmut-orange);
+  margin-bottom: 2rem; /* Increased margin */
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.qr-scanner-placeholder {
+  width: 280px; /* Larger */
+  height: 280px; /* Larger */
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  border-radius: 0.75rem; /* Larger border-radius */
+  margin: 2.5rem auto; /* Increased margin */
+  border: 3px dashed var(--border-color); /* More prominent border */
+}
+
+.qr-scanner-placeholder .icon {
+  font-size: 3rem; /* Larger icon */
+  color: var(--kmut-red);
+  margin-bottom: 0.8rem;
+}
+
+.btn-check-in {
+  background-color: var(--kmut-red);
+  border-color: var(--kmut-red);
+  color: #fff;
+  width: 100%;
+  padding: 0.75rem 1.5rem; /* Adjusted padding */
+  font-size: 1.1rem; /* Adjusted font size */
+  font-weight: bold;
+  margin-top: 2.5rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-check-in:hover {
+  background-color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+}
+
+/* Also adjust the secondary button for consistency */
+.check-in-card .btn-outline-secondary {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.check-in-status-message {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 1.5rem;
+}

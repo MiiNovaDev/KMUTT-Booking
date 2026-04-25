@@ -1,0 +1,13 @@
+# Root gitignore
+node_modules/
+.DS_Store
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/credentials/firebase-admin-key.json
+
+# Frontend
+classroom-booking-app/node_modules/
+classroom-booking-app/dist/
+classroom-booking-app/.env

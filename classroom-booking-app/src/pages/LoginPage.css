@@ -1,0 +1,64 @@
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5; /* A slightly different background */
+}
+
+.login-form {
+  width: 100%;
+  max-width: 420px;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden; /* To keep border-radius on the header */
+}
+
+.login-card-header {
+  background: var(--kmut-orange);
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.login-card-body {
+  padding: 2.5rem;
+}
+
+.login-title {
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.input-group-text {
+  background: transparent;
+  border-right: 0;
+}
+
+.form-control {
+  border-left: 0;
+}
+
+.btn-login {
+  background-color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+  color: #fff;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.btn-login:hover {
+  background-color: var(--kmut-red);
+  border-color: var(--kmut-red);
+}

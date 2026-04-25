@@ -1,0 +1,47 @@
+.navbar-custom {
+  background-color: var(--kmut-orange);
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.navbar-custom .navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-custom .nav-link {
+  color: #fff;
+  font-weight: 500;
+  padding: 0.6rem 1.2rem; /* Increased padding */
+  border-radius: 0.3rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navbar-custom .nav-link:hover {
+  background-color: var(--kmut-red);
+  color: #fff;
+}
+
+.navbar-custom .nav-link.active {
+  background-color: var(--kmut-red);
+  color: #fff;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-item {
+  margin-inline: 0.3rem; /* Added margin between nav items */
+}
+
+.btn-logout {
+  border-color: #fff;
+  color: #fff;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-logout:hover {
+  background-color: #fff;
+  color: var(--kmut-orange);
+}

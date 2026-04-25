@@ -1,0 +1,37 @@
+.admin-container {
+  padding: 2rem;
+}
+
+.admin-header {
+  color: var(--kmut-orange);
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.room-table {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,.05);
+}
+
+.admin-header .btn {
+  border-radius: 0.5rem;
+}
+
+.room-table th {
+  background-color: var(--background-color);
+}
+
+.admin-action-btn {
+  padding: 0.25rem 0.5rem; /* Bootstrap btn-sm default padding */
+  font-size: 0.875rem; /* Bootstrap btn-sm default font size */
+  border-radius: 0.2rem; /* Bootstrap btn-sm default border-radius */
+  min-width: 65px; /* Explicit minimum width for consistency */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+

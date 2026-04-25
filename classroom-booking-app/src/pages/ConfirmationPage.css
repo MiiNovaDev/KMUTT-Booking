@@ -1,0 +1,87 @@
+.confirmation-container {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+  background-color: #f0f2f5; /* A subtle background */
+}
+
+.confirmation-card {
+  width: 100%;
+  max-width: 650px; /* Slightly wider */
+  padding: 2.5rem; /* Increased padding */
+  background-color: #fff;
+  border-radius: 0.75rem; /* Increased border-radius */
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* More prominent shadow */
+  text-align: center;
+  position: relative;
+  overflow: hidden; /* For the top banner effect */
+}
+
+.confirmation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px; /* Thin color banner */
+  background-color: var(--kmut-orange);
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+.confirmation-card h2 {
+  color: var(--kmut-orange);
+  margin-bottom: 2rem; /* Increased margin */
+  font-size: 2.2rem;
+  font-weight: bold;
+  padding-top: 1rem; /* Space for the banner */
+}
+
+.summary-item {
+  margin-bottom: 1.2rem; /* Increased margin */
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.qr-code-placeholder {
+  width: 180px; /* Larger */
+  height: 180px; /* Larger */
+  background-color: #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #6c757d;
+  border-radius: 0.5rem; /* Larger border-radius */
+  margin: 2.5rem auto; /* Increased margin */
+  border: 2px dashed #adb5bd;
+}
+
+.btn-confirm {
+  background-color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+  color: #fff;
+  width: 100%;
+  padding: 0.75rem 1.5rem; /* Adjusted padding */
+  font-size: 1.1rem; /* Adjusted font size */
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-confirm:hover {
+  background-color: var(--kmut-red);
+  border-color: var(--kmut-red);
+}
+
+.btn-outline-secondary {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem; /* Adjusted padding */
+  font-size: 1.1rem; /* Adjusted font size */
+}
