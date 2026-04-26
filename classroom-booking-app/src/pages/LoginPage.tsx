@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Envelope, Lock } from 'react-bootstrap-icons';
 import { auth } from '../firebase'; // Import Firebase auth instance
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { API_BASE_URL } from '../services/api';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -24,7 +25,7 @@ const LoginPage: React.FC = () => {
       const idToken = await user.getIdToken();
 
       // Send ID token to backend for verification and to get user details/role
-      const response = await fetch('http://localhost:5001/api/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

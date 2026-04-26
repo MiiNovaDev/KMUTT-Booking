@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Person, Envelope, Lock } from 'react-bootstrap-icons';
 import { auth } from '../firebase'; // Import Firebase auth instance
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { API_BASE_URL } from '../services/api';
 import './LoginPage.css'; // Reuse login page styles for now
 
 const RegisterPage: React.FC = () => {
@@ -32,7 +33,7 @@ const RegisterPage: React.FC = () => {
 
       // Send additional user details (studentId, role) to your backend
       // Backend will verify ID token and store user details in Firestore
-      const response = await fetch('http://localhost:5001/api/register', {
+      const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -14,8 +14,9 @@ const MyBookingsPage: React.FC = () => {
   const fetchBookingsData = async () => {
     try {
       setLoading(true);
+      const userUid = localStorage.getItem('userUid'); // Get current user's UID
       const fetchedRooms = await getRooms();
-      const fetchedBookings = await getBookings();
+      const fetchedBookings = await getBookings(userUid || undefined); // Pass UID to filter
       setRooms(fetchedRooms);
       setBookings(fetchedBookings);
     } catch (err) {

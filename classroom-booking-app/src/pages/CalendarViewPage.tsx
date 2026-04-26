@@ -152,43 +152,45 @@ const CalendarViewPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="calendar-grid">
-          {weekDays.map(day => (
-            <div key={day} className="calendar-day-header">
-              {day}
-            </div>
-          ))}
-
-          {emptyCells.map(i => (
-            <div key={`empty-${i}`} className="calendar-day"></div>
-          ))}
-
-          {daysInMonth.map((day) => { // Removed _index
-            const bookingsToday = getBookingsForDay(day);
-            const isToday =
-              day.getDate() === new Date().getDate() &&
-              day.getMonth() === new Date().getMonth() &&
-              day.getFullYear() === new Date().getFullYear();
-
-            return (
-              <div
-                key={day.toISOString()}
-                className={`calendar-day ${isToday ? 'today' : ''}`}
-              >
-                <div className="calendar-day-number">{day.getDate()}</div>
-                {bookingsToday.map(booking => {
-                    const { displayStatus, className } = getBookingDisplayInfo(booking);
-                    return (
-                        <div key={booking.id} className={`calendar-booking-item ${className}`}>
-                            {getRoomName(booking.roomId)} ({formatTime(booking.startTime)} - {formatTime(booking.endTime)})
-                            <br />
-                            <small>{displayStatus}</small>
-                        </div>
-                    );
-                })}
+        <div className="calendar-grid-wrapper">
+          <div className="calendar-grid">
+            {weekDays.map(day => (
+              <div key={day} className="calendar-day-header">
+                {day}
               </div>
-            );
-          })}
+            ))}
+
+            {emptyCells.map(i => (
+              <div key={`empty-${i}`} className="calendar-day"></div>
+            ))}
+
+            {daysInMonth.map((day) => { // Removed _index
+              const bookingsToday = getBookingsForDay(day);
+              const isToday =
+                day.getDate() === new Date().getDate() &&
+                day.getMonth() === new Date().getMonth() &&
+                day.getFullYear() === new Date().getFullYear();
+
+              return (
+                <div
+                  key={day.toISOString()}
+                  className={`calendar-day ${isToday ? 'today' : ''}`}
+                >
+                  <div className="calendar-day-number">{day.getDate()}</div>
+                  {bookingsToday.map(booking => {
+                      const { displayStatus, className } = getBookingDisplayInfo(booking);
+                      return (
+                          <div key={booking.id} className={`calendar-booking-item ${className}`}>
+                              {getRoomName(booking.roomId)} ({formatTime(booking.startTime)} - {formatTime(booking.endTime)})
+                              <br />
+                              <small>{displayStatus}</small>
+                          </div>
+                      );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

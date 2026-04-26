@@ -61,6 +61,7 @@ export interface Booking {
   id: string;
   roomId: string;
   userId: string;
+  studentId?: string; // Add studentId to booking
   startTime: Date;
   endTime: Date;
   status: 'Upcoming' | 'In Use' | 'Completed' | 'Cancelled';

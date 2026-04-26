@@ -35,8 +35,12 @@ const createFirestoreFunctions = (db) => ({
   },
 
   // --- Bookings Collection ---
-  getBookings: async () => {
-    const snapshot = await db.collection('bookings').get();
+  getBookings: async (userId) => {
+    let query = db.collection('bookings');
+    if (userId) {
+      query = query.where('userId', '==', userId);
+    }
+    const snapshot = await query.get();
     return snapshot.docs.map(docToObject);
   },
 

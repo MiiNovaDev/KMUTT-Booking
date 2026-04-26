@@ -1,13 +1,27 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { BookFill } from 'react-bootstrap-icons';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  const handleLogout = () => {
-    // Clear the simulated user role on logout
-    localStorage.removeItem('userRole');
-    window.location.href = '/login';
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // localStorage is also cleared in ProtectedRoute's onAuthStateChanged,
+      // but clearing it here as well for immediate feedback and safety.
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userUid');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('studentId');
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (

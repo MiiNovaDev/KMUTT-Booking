@@ -37,6 +37,12 @@ const RoomDetailPage: React.FC = () => {
     fetchData();
   }, [id]); // Re-fetch if ID changes
 
+  // Debugging logs for the button issue
+  console.log("RoomDetailPage: selectedDate:", selectedDate);
+  console.log("RoomDetailPage: selectedStartTime:", selectedStartTime);
+  console.log("RoomDetailPage: selectedEndTime:", selectedEndTime);
+  console.log("RoomDetailPage: button condition:", selectedDate && selectedStartTime && selectedEndTime);
+
   if (loading) {
     return (
       <div>

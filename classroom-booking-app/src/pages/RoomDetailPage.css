@@ -1,5 +1,5 @@
 .room-detail-container {
-  padding: 2.5rem 2rem;
+  padding: var(--section-padding);
 }
 
 .room-detail-header {
@@ -10,6 +10,15 @@
   border-bottom: 2px solid var(--kmut-orange);
   padding-bottom: 0.5rem;
   display: inline-block;
+}
+
+@media (max-width: 576px) {
+  .room-detail-header {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    text-align: center;
+  }
 }
 
 .image-360-placeholder {
@@ -23,6 +32,13 @@
   color: #6c757d;
   border-radius: 0.75rem; /* Increased border-radius */
   margin-bottom: 1.5rem;
+}
+
+@media (max-width: 576px) {
+  .image-360-placeholder {
+    height: 200px;
+    font-size: 1.1rem;
+  }
 }
 
 .viewer-360-container {
@@ -50,6 +66,13 @@
   background-color: #fff;
   border-radius: 0.75rem; /* Increased border-radius */
   box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* More prominent shadow */
+}
+
+@media (max-width: 576px) {
+  .room-info-card {
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
 }
 
 .room-info-card h4 {
@@ -89,4 +112,11 @@
 .btn-book-room:hover {
   background-color: var(--kmut-red);
   border-color: var(--kmut-red);
+}
+
+@media (max-width: 576px) {
+  .btn-book-room {
+    margin-top: 1.5rem;
+    padding: 0.6rem 1rem;
+  }
 }

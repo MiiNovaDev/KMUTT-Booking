@@ -54,6 +54,7 @@ const ConfirmationPage: React.FC = () => {
     }
 
     const userUid = localStorage.getItem('userUid'); // Get user UID from localStorage
+    const studentId = localStorage.getItem('studentId'); // Get student ID from localStorage
     if (!userUid) {
       alert("คุณต้องเข้าสู่ระบบเพื่อทำการจอง.");
       navigate('/login');
@@ -65,6 +66,7 @@ const ConfirmationPage: React.FC = () => {
         roomId: room.id,
         roomName: room.name, // Store room name for easier display
         userId: userUid,
+        studentId: studentId, // Include studentId in booking record
         startTime: new Date(`${selectedDate}T${selectedStartTime}:00`).toISOString(), // ISO string for backend
         endTime: new Date(`${selectedDate}T${selectedEndTime}:00`).toISOString(), // ISO string for backend
         status: 'Upcoming', // Default status

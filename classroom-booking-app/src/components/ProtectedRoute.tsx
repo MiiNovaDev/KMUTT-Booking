@@ -14,12 +14,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("ProtectedRoute: Initializing auth check...");
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("ProtectedRoute: onAuthStateChanged triggered", user ? `User: ${user.email}` : "No user");
       if (user) {
         setIsAuthenticated(true);
-        // Fetch role from localStorage for now, but ideally this would come from backend/ID Token claims
-        setUserRole(localStorage.getItem('userRole')); 
+        const role = localStorage.getItem('userRole');
+        console.log("ProtectedRoute: User is authenticated. Role from localStorage:", role);
+        setUserRole(role); 
       } else {
+        console.log("ProtectedRoute: User is NOT authenticated. Clearing localStorage.");
         setIsAuthenticated(false);
         setUserRole(null);
         // Clear local storage if user logs out

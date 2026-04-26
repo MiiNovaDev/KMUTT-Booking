@@ -172,8 +172,9 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.get('/api/bookings', async (req, res) => {
+  const { userId } = req.query; // Get userId from query params
   try {
-    const bookings = await firestore.getBookings();
+    const bookings = await firestore.getBookings(userId);
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ error: error.message });

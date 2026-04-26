@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api'; 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api'; 
 
 export async function getRooms() {
   const response = await fetch(`${API_BASE_URL}/rooms`);
@@ -65,8 +65,9 @@ export async function deleteRoom(id: string) {
 }
 
 
-export async function getBookings() {
-  const response = await fetch(`${API_BASE_URL}/bookings`);
+export async function getBookings(userId?: string) {
+  const url = userId ? `${API_BASE_URL}/bookings?userId=${userId}` : `${API_BASE_URL}/bookings`;
+  const response = await fetch(url);
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     console.error(`getBookings failed: ${response.status} ${response.statusText}`, errorBody);

@@ -17,12 +17,40 @@ import NotFoundPage from './pages/NotFoundPage';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        } 
+      />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/booking" element={<BookingPage />} />
-      <Route path="/room/:id" element={<RoomDetailPage />} />
-      <Route path="/confirmation" element={<ConfirmationPage />} />
+      <Route 
+        path="/booking" 
+        element={
+          <ProtectedRoute>
+            <BookingPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/room/:id" 
+        element={
+          <ProtectedRoute>
+            <RoomDetailPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/confirmation" 
+        element={
+          <ProtectedRoute>
+            <ConfirmationPage />
+          </ProtectedRoute>
+        } 
+      />
       
       <Route 
         path="/my-bookings" 
@@ -48,7 +76,14 @@ function App() {
           </ProtectedRoute>
         } 
       />
-      <Route path="/all-rooms" element={<AllRoomsPage />} />
+      <Route 
+        path="/all-rooms" 
+        element={
+          <ProtectedRoute>
+            <AllRoomsPage />
+          </ProtectedRoute>
+        } 
+      />
       <Route
         path="/admin"
         element={

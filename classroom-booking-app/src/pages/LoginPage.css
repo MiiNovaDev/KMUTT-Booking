@@ -4,6 +4,7 @@
   justify-content: center;
   min-height: 100vh;
   background-color: #f0f2f5; /* A slightly different background */
+  padding: 1rem; /* Add padding to prevent touching edges on mobile */
 }
 
 .login-form {
@@ -13,6 +14,16 @@
   border-radius: 0.75rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden; /* To keep border-radius on the header */
+}
+
+@media (max-width: 576px) {
+  .login-card-body {
+    padding: 1.5rem; /* Reduce padding on mobile */
+  }
+  
+  .login-card-header {
+    padding: 1.5rem 1rem;
+  }
 }
 
 .login-card-header {
