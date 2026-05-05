@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { getRooms, getBookings, deleteBooking } from '../services/api'; // Import API services, including deleteBooking
-import type { Room, Booking } from '../services/mockData'; // Use types
+import { getRooms, getBookings, deleteBooking } from '../services/api'; 
+import type { Room, Booking } from '../services/mockData'; 
 import './MyBookingsPage.css';
-import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils'; // Import from utility file
+import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils'; 
+import { CalendarPlus } from 'react-bootstrap-icons';
 
 const MyBookingsPage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
   const fetchBookingsData = async () => {
     try {
       setLoading(true);
-      const userUid = localStorage.getItem('userUid'); // Get current user's UID
+      const userUid = localStorage.getItem('userUid');
       const fetchedRooms = await getRooms();
-      const fetchedBookings = await getBookings(userUid || undefined); // Pass UID to filter
+      const fetchedBookings = await getBookings(userUid || undefined);
       setRooms(fetchedRooms);
       setBookings(fetchedBookings);
     } catch (err) {
@@ -29,14 +31,14 @@ const MyBookingsPage: React.FC = () => {
 
   useEffect(() => {
     fetchBookingsData();
-  }, []); // Fetch data only once on mount
+  }, []);
 
   const getRoomName = (roomId: string) => {
-    const room = rooms.find(r => r.id === roomId); // Use fetched rooms
+    const room = rooms.find(r => r.id === roomId);
     return room ? room.name : 'Unknown Room';
   };
 
-  const formatDate = (dateString: Date) => { // Expect Date object from API
+  const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('th-TH', {
       year: 'numeric',
@@ -45,7 +47,7 @@ const MyBookingsPage: React.FC = () => {
     });
   };
 
-  const formatTimeRange = (startString: Date, endString: Date) => { // Expect Date objects
+  const formatTimeRange = (startString: Date, endString: Date) => {
     const start = new Date(startString);
     const end = new Date(endString);
     const startTime = start.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
@@ -53,26 +55,27 @@ const MyBookingsPage: React.FC = () => {
     return `${startTime} - ${endTime}`;
   };
 
-  const handleEdit = (bookingId: string) => {
-    // For now, only alert that it's not implemented. Full implementation would involve a modal.
-    alert(`ฟังก์ชันแก้ไขการจอง ${bookingId} ยังไม่เปิดใช้งาน`);
-  };
-
   const handleCancelBooking = async (bookingId: string) => {
     const bookingToCancel = bookings.find(b => b.id === bookingId);
     const roomName = getRoomName(bookingToCancel?.roomId || '');
     if (window.confirm(`คุณต้องการยกเลิกการจองห้อง ${roomName} ใช่หรือไม่?`)) {
       try {
-        await deleteBooking(bookingId); // Call the API to delete the booking
-        alert(`การจองห้อง ${roomName} (ID: ${bookingId}) ถูกยกเลิกเรียบร้อยแล้ว`);
-        fetchBookingsData(); // Re-fetch bookings after cancellation
+        await deleteBooking(bookingId);
+        alert(`การจองห้อง ${roomName} ถูกยกเลิกเรียบร้อยแล้ว`);
+        fetchBookingsData();
       } catch (err) {
         console.error('Failed to cancel booking:', err);
-        alert(`ไม่สามารถยกเลิกการจองห้อง ${roomName} (ID: ${bookingId}) ได้`);
+        alert(`ไม่สามารถยกเลิกการจองห้องได้`);
       }
-    } else {
-      console.log(`Cancellation of booking ${bookingId} aborted.`);
     }
+  };
+
+  const generateGoogleCalendarUrl = (booking: Booking) => {
+    const roomName = getRoomName(booking.roomId);
+    const start = new Date(booking.startTime).toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const end = new Date(booking.endTime).toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const details = `Booking for ${roomName}. Student ID: ${booking.studentId || 'N/A'}`;
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("จองห้องเรียน: " + roomName)}&dates=${start}/${end}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(roomName)}&sf=true&output=xml`;
   };
 
   if (loading) {
@@ -97,13 +100,23 @@ const MyBookingsPage: React.FC = () => {
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
+          <button className="btn btn-primary mt-3" onClick={() => fetchBookingsData()}>
+            ลองใหม่อีกครั้ง
+          </button>
         </div>
       </div>
     );
   }
 
-  const visibleBookings = bookings.filter(booking => getBookingDisplayInfo(booking).isVisible);
-  const sortedVisibleBookings = sortBookings(visibleBookings);
+  const currentTime = new Date();
+  
+  // Logic: Split bookings into Upcoming and Past
+  const filteredBookings = bookings.filter(booking => getBookingDisplayInfo(booking).isVisible);
+  
+  const upcomingBookings = sortBookings(filteredBookings.filter(b => new Date(b.endTime) >= currentTime));
+  const pastBookings = sortBookings(filteredBookings.filter(b => new Date(b.endTime) < currentTime)).reverse(); // Show latest past bookings first
+
+  const displayBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 
   return (
     <div>
@@ -111,17 +124,32 @@ const MyBookingsPage: React.FC = () => {
       <div className="container my-bookings-container">
         <h1 className="my-bookings-header">ห้องของฉัน / My Bookings</h1>
 
+        {/* Tab Navigation */}
+        <div className="booking-tabs mb-4">
+          <button 
+            className={`tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
+            onClick={() => setActiveTab('upcoming')}
+          >
+            รายการจองที่กำลังจะมาถึง ({upcomingBookings.length})
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'past' ? 'active' : ''}`}
+            onClick={() => setActiveTab('past')}
+          >
+            ประวัติการจอง ({pastBookings.length})
+          </button>
+        </div>
+
         <div className="row">
-          {sortedVisibleBookings.length > 0 ? ( // Use sorted and filtered bookings
-            sortedVisibleBookings.map(booking => {
+          {displayBookings.length > 0 ? (
+            displayBookings.map(booking => {
               const { displayStatus, className } = getBookingDisplayInfo(booking);
-              const currentTime = new Date();
               const bookingStartTime = new Date(booking.startTime);
-              const isPastStartTime = bookingStartTime < currentTime; // New variable to check if start time has passed
+              const isPastStartTime = bookingStartTime < currentTime;
 
               return (
                 <div key={booking.id} className="col-md-6 col-lg-4">
-                  <div className="booking-card">
+                  <div className={`booking-card ${activeTab === 'past' ? 'past-card' : ''}`}>
                     <h5 className="room-name">{getRoomName(booking.roomId)}</h5>
                     <div className="booking-details">
                       <p className="mb-0">
@@ -138,7 +166,7 @@ const MyBookingsPage: React.FC = () => {
                       </span>
                     </div>
 
-                    {booking.status === 'Upcoming' && !isPastStartTime && ( // Show QR code only if upcoming and start time has not passed
+                    {booking.status === 'Upcoming' && !isPastStartTime && (
                       <div className="booking-qr-code-container">
                         <p className="text-muted mb-2">แสดง QR Code สำหรับเช็คอิน</p>
                         <img 
@@ -149,10 +177,18 @@ const MyBookingsPage: React.FC = () => {
                     )}
 
                     <div className="booking-actions">
-                      {booking.status === 'Upcoming' && !isPastStartTime && ( // Show actions only if upcoming and start time has not passed
+                      {booking.status === 'Upcoming' && !isPastStartTime && (
                         <>
+                          <a 
+                            href={generateGoogleCalendarUrl(booking)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="btn btn-sm btn-outline-primary me-2"
+                            title="Add to Google Calendar"
+                          >
+                            <CalendarPlus className="me-1" /> เพิ่มในปฏิทิน
+                          </a>
                           <button className="btn btn-sm btn-outline-danger" onClick={() => handleCancelBooking(booking.id)}>ยกเลิก</button>
-                          <button className="btn btn-sm btn-outline-secondary" onClick={() => handleEdit(booking.id)}>แก้ไข</button>
                         </>
                       )}
                     </div>
@@ -161,7 +197,9 @@ const MyBookingsPage: React.FC = () => {
               );
             })
           ) : (
-            <p className="text-center text-muted">คุณยังไม่มีรายการจอง</p>
+            <p className="text-center text-muted py-5">
+              {activeTab === 'upcoming' ? 'คุณยังไม่มีรายการจองที่กำลังจะมาถึง' : 'คุณยังไม่มีประวัติการจอง'}
+            </p>
           )}
         </div>
       </div>

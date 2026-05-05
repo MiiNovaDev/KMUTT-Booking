@@ -11,3 +11,13 @@ backend/credentials/firebase-admin-key.json
 classroom-booking-app/node_modules/
 classroom-booking-app/dist/
 classroom-booking-app/.env
+
+# Financial
+financial/
+
+# Credentials & Secrets
+KMLTT/backend/credentials/
+.env*
+KMLTT/backend/.env
+KMLTT/classroom-booking-app/.env*
+**/firebase-admin-key.json

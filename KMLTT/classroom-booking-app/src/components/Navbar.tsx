@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
-          <BookFill /> KMUTT Booking
+          <BookFill /> ECT Booking
         </Link>
         <button
           className="navbar-toggler"

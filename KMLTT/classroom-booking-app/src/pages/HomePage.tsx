@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
       <Navbar />
       <div className="container home-container">
         <div className="dashboard-header">
-          <h1>Welcome to KMUTT Booking</h1>
+          <h1>Welcome to ECT Booking</h1>
           <Link to="/booking" className="btn btn-book-main">
             จองห้องเรียน
           </Link>

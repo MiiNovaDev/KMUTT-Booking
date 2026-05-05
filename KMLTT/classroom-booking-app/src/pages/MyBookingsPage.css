@@ -1,0 +1,154 @@
+.my-bookings-container {
+  padding: 2.5rem 2rem;
+}
+
+.my-bookings-header {
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border-bottom: 4px solid var(--kmut-orange);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Tabs Styling */
+.booking-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  position: relative;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.tab-btn:hover {
+  color: var(--kmut-orange);
+}
+
+.tab-btn.active {
+  color: var(--kmut-orange);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: var(--kmut-orange);
+  border-radius: 4px 4px 0 0;
+}
+
+/* Booking Card */
+.booking-card {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-top: 6px solid var(--kmut-orange);
+}
+
+.booking-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.past-card {
+  opacity: 0.75;
+  filter: grayscale(0.2);
+  border-top-color: #adb5bd; /* Gray for past */
+}
+
+.booking-card .room-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.booking-card .booking-details {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.booking-card .booking-status {
+  margin-top: 1.2rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Status Colors */
+.booking-card .status-upcoming {
+  color: var(--kmut-orange);
+}
+
+.booking-card .status-in-use {
+  color: #d32f2f; /* ECT Red */
+}
+
+.booking-card .status-completed,
+.booking-card .status-finished {
+  color: #198754;
+}
+
+.booking-card .status-cancelled {
+  color: #dc3545;
+}
+
+.booking-qr-code-container {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.booking-qr-code-container img {
+  max-width: 120px;
+  height: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 5px;
+  background: white;
+}
+
+.booking-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.booking-actions .btn {
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.btn-outline-primary {
+  color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--kmut-orange);
+  border-color: var(--kmut-orange);
+  color: white;
+}

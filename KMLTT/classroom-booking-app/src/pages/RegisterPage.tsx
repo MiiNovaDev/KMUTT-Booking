@@ -73,7 +73,7 @@ const RegisterPage: React.FC = () => {
     <div className="login-container">
       <div className="login-form">
         <div className="login-card-header">
-          <h1 className="login-logo">KMUTT</h1>
+          <h1 className="login-logo">ECT</h1>
           <h2 className="text-white fs-6">Classroom Booking</h2>
         </div>
         <div className="login-card-body">
