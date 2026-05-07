@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import RoomCard from '../components/RoomCard';
 import { CalendarDate, Clock, People, BuildingsFill } from 'react-bootstrap-icons';
-import { getRooms, getBookings } from '../services/api'; // Import API services
+import { subscribeToRooms, subscribeToBookings } from '../services/api'; // Import real-time subscriptions
 import type { Room, Booking } from '../services/mockData'; // Use types
 import './BookingPage.css';
 
@@ -30,22 +30,22 @@ const BookingPage: React.FC = () => {
 
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const fetchedRooms = await getRooms();
-        const fetchedBookings = await getBookings();
-        setRooms(fetchedRooms);
-        setBookings(fetchedBookings);
-      } catch (err) {
-        setError('Failed to fetch data. Please ensure the backend server is running.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []); // Fetch data only once on mount
+    setLoading(true);
+    
+    const unsubscribeRooms = subscribeToRooms((fetchedRooms) => {
+      setRooms(fetchedRooms);
+      setLoading(false);
+    });
+
+    const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
+      setBookings(fetchedBookings);
+    });
+
+    return () => {
+      unsubscribeRooms();
+      unsubscribeBookings();
+    };
+  }, []); // Real-time subscriptions instead of one-time fetch
 
   // Validate start and end times
   useEffect(() => {
@@ -195,7 +195,7 @@ const BookingPage: React.FC = () => {
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-2">Loading data...</p>
+          <p className="mt-2">Loading real-time data...</p>
         </div>
       </div>
     );

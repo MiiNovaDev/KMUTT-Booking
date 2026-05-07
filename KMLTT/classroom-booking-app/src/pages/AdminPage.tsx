@@ -1,45 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-// import { mockRooms } from '../services/mockData'; // Removed mock data
-import type { Room, Booking, User } from '../services/mockData'; // Import User type
+import type { Room, Booking, User } from '../services/mockData';
 import AddEditRoomModal from '../components/AddEditRoomModal';
 import { Link } from 'react-router-dom';
-import { getRooms, addRoom, updateRoom, deleteRoom, getBookings, getUsers } from '../services/api'; // Import all necessary API services
+import { addRoom, updateRoom, deleteRoom, getUsers, subscribeToRooms, subscribeToBookings } from '../services/api';
 import './AdminPage.css';
-import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils'; // Import from utility file
+import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils';
 
 const AdminPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]); // State for actual rooms data
-  const [bookings, setBookings] = useState<Booking[]>([]); // State for actual bookings data
-  const [users, setUsers] = useState<User[]>([]); // State for actual users data
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all data (rooms, bookings, users) on component mount
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    setLoading(true);
+    
+    // Fetch users (less frequent, can be static for now or add subscription later)
+    getUsers().then(setUsers).catch(console.error);
 
-  const fetchAllData = async () => {
-    try {
-      setLoading(true);
-      const [fetchedRooms, fetchedBookings, fetchedUsers] = await Promise.all([
-        getRooms(),
-        getBookings(),
-        getUsers()
-      ]);
+    const unsubscribeRooms = subscribeToRooms((fetchedRooms) => {
       setRooms(fetchedRooms);
-      setBookings(fetchedBookings);
-      setUsers(fetchedUsers);
-    } catch (err) {
-      console.error('Failed to fetch data for AdminPage:', err);
-      setError('Failed to fetch data. Please ensure the backend server is running and configured correctly.');
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
+      setBookings(fetchedBookings);
+    });
+
+    return () => {
+      unsubscribeRooms();
+      unsubscribeBookings();
+    };
+  }, []);
 
   const handleAddRoom = () => {
     setEditingRoom(null);
@@ -47,7 +43,7 @@ const AdminPage: React.FC = () => {
   };
 
   const handleEditRoom = (roomId: string) => {
-    const room = rooms.find(r => r.id === roomId) || null; // Use actual rooms data
+    const room = rooms.find(r => r.id === roomId) || null;
     setEditingRoom(room);
     setIsModalOpen(true);
   };
@@ -57,13 +53,10 @@ const AdminPage: React.FC = () => {
       try {
         await deleteRoom(roomId);
         alert(`Room ${roomId} deleted successfully.`);
-        fetchAllData(); // Re-fetch all data after deletion
       } catch (err) {
         console.error('Failed to delete room:', err);
         alert(`Failed to delete room ${roomId}.`);
       }
-    } else {
-      console.log(`Deletion of room ${roomId} cancelled.`);
     }
   };
 
@@ -75,15 +68,12 @@ const AdminPage: React.FC = () => {
   const handleSaveRoom = async (roomData: Omit<Room, 'id'>) => {
     try {
       if (editingRoom) {
-        // Update existing room
         await updateRoom(editingRoom.id, roomData);
         alert(`Room ${roomData.name} updated successfully.`);
       } else {
-        // Add new room
         await addRoom(roomData);
         alert(`New room ${roomData.name} added successfully.`);
       }
-      fetchAllData(); // Re-fetch all data after saving
     } catch (err) {
       console.error('Failed to save room:', err);
       alert(`Failed to save room ${roomData.name}.`);
@@ -92,13 +82,11 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // Helper function to get student ID from user data
   const getUserStudentId = (userId: string) => {
     const user = users.find(u => u.uid === userId);
     return user ? user.studentId : 'Unknown User';
   };
 
-  // Helper function to get room name from room data
   const getRoomName = (roomId: string) => {
     const room = rooms.find(r => r.id === roomId);
     return room ? room.name : 'Unknown Room';
@@ -129,20 +117,7 @@ const AdminPage: React.FC = () => {
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-2">Loading data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <Navbar />
-        <div className="container admin-container text-center mt-5">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
+          <p className="mt-2">Loading real-time data...</p>
         </div>
       </div>
     );
@@ -151,15 +126,17 @@ const AdminPage: React.FC = () => {
   const visibleBookings = bookings.filter(booking => getBookingDisplayInfo(booking).isVisible);
   const sortedVisibleBookings = sortBookings(visibleBookings);
 
-
   return (
     <div>
       <Navbar />
       <div className="container admin-container">
         <div className="admin-header">
           <h1>Admin Panel</h1>
-          <div>
-            <Link to="/check-in" className="btn btn-info me-2">
+          <div className="d-flex flex-wrap gap-2">
+            <Link to="/admin/users" className="btn btn-warning">
+              Manage Users (จัดการสมาชิก)
+            </Link>
+            <Link to="/check-in" className="btn btn-info">
               Check-in (Admin Scan)
             </Link>
             <button className="btn btn-primary" onClick={handleAddRoom}>
@@ -168,7 +145,6 @@ const AdminPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Rooms Management Section */}
         <h2 className="section-header mt-5">Room Management</h2>
         <div className="table-responsive room-table">
           <table className="table table-striped table-hover">
@@ -182,7 +158,7 @@ const AdminPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {rooms.map(room => ( // Use actual rooms data
+              {rooms.map(room => (
                 <tr key={room.id}>
                   <td>{room.id}</td>
                   <td>{room.name}</td>
@@ -210,7 +186,6 @@ const AdminPage: React.FC = () => {
           </table>
         </div>
 
-        {/* Bookings Overview Section */}
         <h2 className="section-header mt-5">All Bookings Overview</h2>
         <div className="table-responsive booking-table">
           {sortedVisibleBookings.length > 0 ? (
@@ -222,7 +197,6 @@ const AdminPage: React.FC = () => {
                   <th>Date</th>
                   <th>Time</th>
                   <th>Status</th>
-                  {/* Add more columns as needed, e.g., Actions for admin to cancel */}
                 </tr>
               </thead>
               <tbody>

@@ -3,33 +3,36 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import RoomCard from '../components/RoomCard';
 import { BuildingsFill, GearFill } from 'react-bootstrap-icons';
-import { getRooms, getBookings } from '../services/api'; // Import API services
+import { subscribeToRooms, subscribeToBookings } from '../services/api'; // Import subscriptions
 import type { Room, Booking } from '../services/mockData'; // Use types
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
-  const isAdmin = localStorage.getItem('userRole') === 'ADMIN'; // Replaced useState with direct assignment
+  const isAdmin = localStorage.getItem('userRole') === 'ADMIN'; 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const fetchedRooms = await getRooms();
-        const fetchedBookings = await getBookings();
-        setRooms(fetchedRooms);
-        setBookings(fetchedBookings);
-      } catch (err) {
-        setError('Failed to fetch data. Please ensure the backend server is running.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
+    setLoading(true);
+    
+    // Subscribe to real-time rooms
+    const unsubscribeRooms = subscribeToRooms((fetchedRooms) => {
+      setRooms(fetchedRooms);
+      setLoading(false);
+    });
+
+    // Subscribe to real-time bookings
+    const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
+      setBookings(fetchedBookings);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      unsubscribeRooms();
+      unsubscribeBookings();
+    };
   }, []);
 
   const availableRooms = rooms.filter(room => room.status === 'Available');
@@ -42,24 +45,16 @@ const HomePage: React.FC = () => {
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-2">Loading data...</p>
+          <p className="mt-2">Loading real-time data...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <Navbar />
-        <div className="container home-container text-center mt-5">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const userUid = localStorage.getItem('userUid');
+  const userUpcomingBookingsCount = bookings.filter(
+    b => b.status === 'Upcoming' && b.userId === userUid
+  ).length;
 
   return (
     <div>
@@ -105,7 +100,7 @@ const HomePage: React.FC = () => {
           <h2 className="section-header">ห้องที่กำลังจะถูกจอง</h2>
           <div className="row">
             <p className="text-muted">
-              คุณมี {bookings.filter(b => b.status === 'Upcoming').length} รายการจองที่กำลังจะมาถึง
+              คุณมี {userUpcomingBookingsCount} รายการจองที่กำลังจะมาถึง
             </p>
           </div>
         </section>

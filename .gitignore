@@ -2,15 +2,15 @@
 node_modules/
 .DS_Store
 
-# Backend
-backend/node_modules/
-backend/.env
-backend/credentials/firebase-admin-key.json
+# Backend (inside KMLTT)
+KMLTT/backend/node_modules/
+KMLTT/backend/.env
+KMLTT/backend/credentials/firebase-admin-key.json
 
-# Frontend
-classroom-booking-app/node_modules/
-classroom-booking-app/dist/
-classroom-booking-app/.env
+# Frontend (inside KMLTT)
+KMLTT/classroom-booking-app/node_modules/
+KMLTT/classroom-booking-app/dist/
+KMLTT/classroom-booking-app/.env
 
 # Financial
 financial/
@@ -18,6 +18,4 @@ financial/
 # Credentials & Secrets
 KMLTT/backend/credentials/
 .env*
-KMLTT/backend/.env
-KMLTT/classroom-booking-app/.env*
 **/firebase-admin-key.json

@@ -201,10 +201,10 @@ app.post('/api/bookings', async (req, res) => {
 });
 
 app.put('/api/bookings/:id/status', async (req, res) => {
-  const { status } = req.body;
+  const { status, ...extraData } = req.body;
   const { id } = req.params;
   try {
-    const updatedBooking = await firestore.updateBooking(id, { status: status });
+    const updatedBooking = await firestore.updateBooking(id, { status: status, ...extraData });
     res.json(updatedBooking);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -215,6 +215,17 @@ app.delete('/api/bookings/:id', async (req, res) => {
   try {
     await firestore.deleteBooking(req.params.id);
     res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/users/:uid/role', async (req, res) => {
+  const { uid } = req.params;
+  const { role } = req.body;
+  try {
+    const updatedUser = await firestore.updateUser(uid, { role: role });
+    res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -66,6 +66,7 @@ export interface Booking {
   endTime: Date;
   status: 'Upcoming' | 'In Use' | 'Completed' | 'Cancelled';
   roomName?: string; // Add optional roomName for convenience in UI
+  checkedIn?: boolean; // New field for Feature 1
 }
 
 export interface User {

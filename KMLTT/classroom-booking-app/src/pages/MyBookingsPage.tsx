@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { getRooms, getBookings, deleteBooking } from '../services/api'; 
+import { subscribeToRooms, subscribeToBookings, deleteBooking } from '../services/api'; 
 import type { Room, Booking } from '../services/mockData'; 
 import './MyBookingsPage.css';
 import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils'; 
@@ -10,28 +10,27 @@ const MyBookingsPage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
-  const fetchBookingsData = async () => {
-    try {
-      setLoading(true);
-      const userUid = localStorage.getItem('userUid');
-      const fetchedRooms = await getRooms();
-      const fetchedBookings = await getBookings(userUid || undefined);
-      setRooms(fetchedRooms);
-      setBookings(fetchedBookings);
-    } catch (err) {
-      setError('Failed to fetch data. Please ensure the backend server is running.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const userUid = localStorage.getItem('userUid') || '';
 
   useEffect(() => {
-    fetchBookingsData();
-  }, []);
+    setLoading(true);
+    
+    // Subscribe to all rooms to get names
+    const unsubscribeRooms = subscribeToRooms(setRooms);
+
+    // Subscribe to USER SPECIFIC bookings
+    const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
+      setBookings(fetchedBookings);
+      setLoading(false);
+    }, userUid);
+
+    return () => {
+      unsubscribeRooms();
+      unsubscribeBookings();
+    };
+  }, [userUid]);
 
   const getRoomName = (roomId: string) => {
     const room = rooms.find(r => r.id === roomId);
@@ -62,7 +61,6 @@ const MyBookingsPage: React.FC = () => {
       try {
         await deleteBooking(bookingId);
         alert(`การจองห้อง ${roomName} ถูกยกเลิกเรียบร้อยแล้ว`);
-        fetchBookingsData();
       } catch (err) {
         console.error('Failed to cancel booking:', err);
         alert(`ไม่สามารถยกเลิกการจองห้องได้`);
@@ -86,23 +84,7 @@ const MyBookingsPage: React.FC = () => {
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-2">Loading data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <Navbar />
-        <div className="container my-bookings-container text-center mt-5">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-          <button className="btn btn-primary mt-3" onClick={() => fetchBookingsData()}>
-            ลองใหม่อีกครั้ง
-          </button>
+          <p className="mt-2">Loading your bookings...</p>
         </div>
       </div>
     );

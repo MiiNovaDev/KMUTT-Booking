@@ -10,6 +10,7 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import CalendarViewPage from './pages/CalendarViewPage';
 import CheckInPage from './pages/CheckInPage';
 import AdminPage from './pages/AdminPage';
+import UserManagementPage from './pages/UserManagementPage';
 import AllRoomsPage from './pages/AllRoomsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotFoundPage from './pages/NotFoundPage';
@@ -89,6 +90,14 @@ function App() {
         element={
           <ProtectedRoute adminOnly={true}>
             <AdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <UserManagementPage />
           </ProtectedRoute>
         }
       />

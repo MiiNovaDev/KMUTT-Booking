@@ -1,4 +1,70 @@
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { firestoreDb } from '../firebase';
+import type { Room, Booking } from './mockData';
+
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api'; 
+
+// --- Real-time Subscriptions (Feature 3) ---
+
+export function subscribeToRooms(callback: (rooms: Room[]) => void) {
+  return onSnapshot(collection(firestoreDb, 'rooms'), (snapshot) => {
+    const rooms = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Room));
+    callback(rooms);
+  });
+}
+
+export function subscribeToBookings(callback: (bookings: Booking[]) => void, userId?: string) {
+  let q = query(collection(firestoreDb, 'bookings'));
+  if (userId) {
+    q = query(collection(firestoreDb, 'bookings'), where('userId', '==', userId));
+  }
+  
+  return onSnapshot(q, (snapshot) => {
+    const bookings = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+        id: doc.id, 
+        ...data,
+        startTime: data.startTime?.toDate ? data.startTime.toDate() : new Date(data.startTime),
+        endTime: data.endTime?.toDate ? data.endTime.toDate() : new Date(data.endTime)
+      } as Booking;
+    });
+    
+    // Auto-release check (Feature 1 - Lazy approach)
+    checkAutoRelease(bookings);
+    
+    callback(bookings);
+  });
+}
+
+// --- Auto-Release Logic (Feature 1) ---
+
+const RELEASE_TIMEOUT_MINUTES = 15;
+
+async function checkAutoRelease(bookings: Booking[]) {
+  const now = new Date();
+  
+  const expiredBookings = bookings.filter(b => {
+    if (b.status !== 'Upcoming' || b.checkedIn) return false;
+    
+    const startTime = new Date(b.startTime);
+    const diffInMinutes = (now.getTime() - startTime.getTime()) / (1000 * 60);
+    
+    return diffInMinutes >= RELEASE_TIMEOUT_MINUTES;
+  });
+
+  for (const booking of expiredBookings) {
+    console.log(`Auto-releasing booking ${booking.id} due to no check-in.`);
+    try {
+      await updateBookingStatus(booking.id, 'Cancelled');
+      // Optional: Send notification or log specifically for auto-release
+    } catch (err) {
+      console.error(`Failed to auto-release booking ${booking.id}:`, err);
+    }
+  }
+}
+
+// --- Standard API Calls ---
 
 export async function getRooms() {
   const response = await fetch(`${API_BASE_URL}/rooms`);
@@ -118,13 +184,13 @@ export async function updateBooking(id: string, bookingData: any) {
   return await response.json();
 }
 
-export async function updateBookingStatus(id: string, status: string) {
+export async function updateBookingStatus(id: string, status: string, extraData: any = {}) {
   const response = await fetch(`${API_BASE_URL}/bookings/${id}/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status, ...extraData }),
   });
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
@@ -151,6 +217,22 @@ export async function getUsers() {
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     console.error(`getUsers failed: ${response.status} ${response.statusText}`, errorBody);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return await response.json();
+}
+
+export async function updateUserRole(uid: string, role: string) {
+  const response = await fetch(`${API_BASE_URL}/users/${uid}/role`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ role }),
+  });
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error(`updateUserRole failed: ${response.status} ${response.statusText}`, errorBody);
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   return await response.json();

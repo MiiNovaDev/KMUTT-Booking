@@ -35,9 +35,10 @@ const CheckInPage: React.FC = () => {
     setCheckInMessage(`กำลังอัปเดตสถานะการจองเป็น "กำลังใช้งาน"...`);
 
     try {
-      await updateBookingStatus(currentBooking.id, 'In Use');
+      // Feature 1: Mark as In Use AND set checkedIn to true
+      await updateBookingStatus(currentBooking.id, 'In Use', { checkedIn: true });
       setCheckInMessage(`เช็คอินสำเร็จ! การจองห้อง ${currentBooking.roomName || currentBooking.roomId} (ID: ${currentBooking.id}) ยืนยันการใช้งานแล้ว`);
-      setCurrentBooking({ ...currentBooking, status: 'In Use' }); // Update local state
+      setCurrentBooking({ ...currentBooking, status: 'In Use', checkedIn: true }); // Update local state
     } catch (err: any) {
       console.error('CheckInPage: Check-in confirmation failed:', err);
       setCheckInMessage(`เกิดข้อผิดพลาดในการเช็คอิน: ${err.message || 'unknown error'}`);
