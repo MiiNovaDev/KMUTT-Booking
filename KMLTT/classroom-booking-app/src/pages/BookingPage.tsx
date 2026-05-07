@@ -16,7 +16,6 @@ const BookingPage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [timeError, setTimeError] = useState<string | null>(null); // New state for time validation error
   const [dateError, setDateError] = useState<string | null>(null); // New state for date validation error
   const [pastTimeError, setPastTimeError] = useState<string | null>(null); // New state for past time validation error
@@ -196,19 +195,6 @@ const BookingPage: React.FC = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
           <p className="mt-2">Loading real-time data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <Navbar />
-        <div className="container booking-container text-center mt-5">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
         </div>
       </div>
     );
