@@ -88,5 +88,6 @@ export const mockBookings: Booking[] = [
         startTime: setTimeForToday(17, 0), // Today 17:00
         endTime: setTimeForToday(19, 0),   // Today 19:00
         status: 'Upcoming',
+        objective: 'Meeting for Senior Project',
     }
 ]
