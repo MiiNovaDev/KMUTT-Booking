@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import RoomCard from '../components/RoomCard';
-import { CalendarDate, Clock, People, BuildingsFill } from 'react-bootstrap-icons';
+import { CalendarDate, Clock, People } from 'react-bootstrap-icons';
 import { subscribeToRooms, subscribeToBookings } from '../services/api'; // Import real-time subscriptions
 import type { Room, Booking } from '../services/mockData'; // Use types
 import './BookingPage.css';
@@ -11,7 +11,6 @@ const BookingPage: React.FC = () => {
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('10:00');
   const [capacity, setCapacity] = useState(1);
-  const [roomType, setRoomType] = useState('All');
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -141,20 +140,10 @@ const BookingPage: React.FC = () => {
           setEndTime('10:00');
         }
       }
-    } else {
-      // If date is not today, ensure startTime/endTime are not restricted by current time
-      // Keep existing selection, but clear pastTimeError (already handled in other useEffect)
-      // Optionally reset to default if the user wants
-      // setStartTime('09:00'); 
-      // setEndTime('10:00');
     }
   }, [date, todayISO, startTime, endTime, dynamicTimeOptions]);
 
 
-  const roomTypes = useMemo(() => 
-    ['All', ...Array.from(new Set(rooms.map(r => r.type)))]
-  , [rooms]); // Depend on fetched rooms
-  
   const filteredRooms = useMemo(() => {
     if (timeError || dateError || pastTimeError) { // Do not filter if there's any validation error
       return [];
@@ -164,11 +153,10 @@ const BookingPage: React.FC = () => {
     const requestedEndTime = new Date(`${date}T${endTime}:00`);
 
     return rooms.filter(room => { // Use fetched rooms
-      // Filter 1: Basic properties (Status, Type, Capacity)
+      // Filter 1: Basic properties (Status, Capacity)
       if (room.status === 'Unavailable') return false;
-      const typeMatch = roomType === 'All' || room.type === roomType;
       const capacityMatch = room.capacity >= (capacity || 1);
-      if (!typeMatch || !capacityMatch) return false;
+      if (!capacityMatch) return false;
 
       // Filter 2: Check for booking conflicts
       const hasConflict = bookings.some(booking => { // Use fetched bookings
@@ -184,7 +172,7 @@ const BookingPage: React.FC = () => {
 
       return !hasConflict;
     });
-  }, [date, startTime, endTime, capacity, roomType, rooms, bookings, timeError, dateError, pastTimeError]); // Depend on all filter states and fetched data, including new pastTimeError
+  }, [date, startTime, endTime, capacity, rooms, bookings, timeError, dateError, pastTimeError]);
 
   if (loading) {
     return (
@@ -224,7 +212,7 @@ const BookingPage: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <label htmlFor="startTime" className="form-label">ตั้งแต่</label>
               <div className="input-group">
                 <span className="input-group-text"><Clock /></span>
@@ -233,7 +221,7 @@ const BookingPage: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <label htmlFor="endTime" className="form-label">ถึง</label>
               <div className="input-group">
                 <span className="input-group-text"><Clock /></span>
@@ -242,20 +230,11 @@ const BookingPage: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <label htmlFor="capacity" className="form-label">จำนวนคน (ขั้นต่ำ)</label>
               <div className="input-group">
                 <span className="input-group-text"><People /></span>
                 <input type="number" className="form-control" id="capacity" min="1" value={capacity} onChange={e => setCapacity(parseInt(e.target.value, 10))} />
-              </div>
-            </div>
-            <div className="col-md-3">
-              <label htmlFor="roomType" className="form-label">ประเภทห้อง</label>
-              <div className="input-group">
-                <span className="input-group-text"><BuildingsFill /></span>
-                <select id="roomType" className="form-select" value={roomType} onChange={e => setRoomType(e.target.value)}>
-                  {roomTypes.map(type => <option key={type} value={type}>{type}</option>)}
-                </select>
               </div>
             </div>
           </form>

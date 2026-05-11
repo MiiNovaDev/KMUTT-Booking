@@ -151,7 +151,6 @@ const AdminPage: React.FC = () => {
               <tr>
                 <th>Room ID</th>
                 <th>Name</th>
-                <th>Type</th>
                 <th>Capacity</th>
                 <th>Actions</th>
               </tr>
@@ -161,7 +160,6 @@ const AdminPage: React.FC = () => {
                 <tr key={room.id}>
                   <td>{room.id}</td>
                   <td>{room.name}</td>
-                  <td>{room.type}</td>
                   <td>{room.capacity}</td>
                   <td>
                     <div className="d-flex gap-2">
@@ -195,6 +193,7 @@ const AdminPage: React.FC = () => {
                   <th>Student ID</th>
                   <th>Date</th>
                   <th>Time</th>
+                  <th>Objective</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -207,6 +206,7 @@ const AdminPage: React.FC = () => {
                       <td>{getUserStudentId(booking.userId)}</td>
                       <td>{formatDate(booking.startTime)}</td>
                       <td>{formatTimeRange(booking.startTime, booking.endTime)}</td>
+                      <td>{booking.objective || '-'}</td>
                       <td>
                         <span className={className}>
                           {displayStatus}

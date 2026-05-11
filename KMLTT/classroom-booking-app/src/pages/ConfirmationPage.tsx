@@ -20,6 +20,8 @@ const ConfirmationPage: React.FC = () => {
   const selectedStartTime = queryParams.get('startTime');
   const selectedEndTime = queryParams.get('endTime');
 
+  const [objective, setObjective] = useState('');
+
   useEffect(() => {
     async function fetchRoomDetails() {
       if (!roomId) {
@@ -47,6 +49,11 @@ const ConfirmationPage: React.FC = () => {
       return;
     }
 
+    if (!objective.trim()) {
+      alert("โปรดระบุวัตถุประสงค์การใช้งาน.");
+      return;
+    }
+
     // Time validation: ensure end time is after start time
     if (selectedStartTime >= selectedEndTime) {
       alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น.");
@@ -71,6 +78,7 @@ const ConfirmationPage: React.FC = () => {
         endTime: new Date(`${selectedDate}T${selectedEndTime}:00`).toISOString(), // ISO string for backend
         status: 'Upcoming', // Default status
         createdAt: new Date().toISOString(),
+        objective: objective.trim(), // Include objective
       };
       
       await addBooking(bookingData);
@@ -149,6 +157,19 @@ const ConfirmationPage: React.FC = () => {
           <p className="summary-item">
             <strong>เวลา:</strong> {displayTime}
           </p>
+
+          <div className="mb-3">
+            <label htmlFor="objective" className="form-label"><strong>วัตถุประสงค์การใช้งาน:</strong></label>
+            <textarea 
+              className="form-control" 
+              id="objective" 
+              rows={3} 
+              value={objective} 
+              onChange={(e) => setObjective(e.target.value)}
+              placeholder="เช่น ติวหนังสือ, ประชุมกลุ่ม, ทำโครงงาน..."
+              required
+            ></textarea>
+          </div>
 
           <div className="qr-code-placeholder">
             <QrCode size={50} />

@@ -140,6 +140,9 @@ const MyBookingsPage: React.FC = () => {
                       <p className="mb-0">
                         <strong>เวลา:</strong> {formatTimeRange(new Date(booking.startTime), new Date(booking.endTime))}
                       </p>
+                      <p className="mb-0">
+                        <strong>วัตถุประสงค์:</strong> {booking.objective || 'ไม่ได้ระบุ'}
+                      </p>
                     </div>
                     <div className="booking-status mt-2">
                       สถานะ: {' '}

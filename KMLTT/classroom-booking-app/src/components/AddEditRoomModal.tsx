@@ -9,13 +9,11 @@ interface AddEditRoomModalProps {
   roomToEdit: Room | null;
 }
 
-type RoomType = 'Lecture Hall' | 'Computer Lab' | 'Meeting Room' | 'Classroom';
 type RoomStatus = 'Available' | 'Unavailable';
 
 const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSave, roomToEdit }) => {
   const [name, setName] = useState(roomToEdit ? roomToEdit.name : '');
   const [capacity, setCapacity] = useState(roomToEdit ? roomToEdit.capacity : 10);
-  const [type, setType] = useState<RoomType>(roomToEdit ? roomToEdit.type : 'Classroom');
   const [location, setLocation] = useState(roomToEdit ? roomToEdit.location : '');
   const [equipment, setEquipment] = useState(roomToEdit ? roomToEdit.equipment.join(', ') : '');
   const [size, setSize] = useState(roomToEdit ? roomToEdit.size : '');
@@ -33,13 +31,11 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
     const roomData = {
       name,
       capacity,
-      type,
       location,
       equipment: equipment.split(',').map(item => item.trim()),
       size,
       status,
       imageUrl, // Use imageUrl directly from state
-      // imageUrl: `https://via.placeholder.com/400x300.png?text=${name.replace(' ', '+')}` // Removed placeholder generation
     };
     onSave(roomData);
   };
@@ -67,15 +63,6 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
                 <div className="mb-3">
                   <label htmlFor="capacity" className="form-label">Capacity</label>
                   <input type="number" className="form-control" id="capacity" value={capacity} onChange={e => setCapacity(parseInt(e.target.value, 10))} required />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="type" className="form-label">Type</label>
-                  <select className="form-select" id="type" value={type} onChange={e => setType(e.target.value as RoomType)}>
-                    <option value="Classroom">Classroom</option>
-                    <option value="Lecture Hall">Lecture Hall</option>
-                    <option value="Computer Lab">Computer Lab</option>
-                    <option value="Meeting Room">Meeting Room</option>
-                  </select>
                 </div>
                  <div className="mb-3">
                   <label htmlFor="location" className="form-label">Location</label>

@@ -7,7 +7,6 @@ export interface Room {
   location: string;
   equipment: string[];
   size: string;
-  type: 'Lecture Hall' | 'Computer Lab' | 'Meeting Room' | 'Classroom';
 }
 
 export const mockRooms: Room[] = [
@@ -20,7 +19,6 @@ export const mockRooms: Room[] = [
     location: 'LX Building, 1st Floor',
     equipment: ['Projector', 'Whiteboard', 'Sound System'],
     size: '150 sq.m.',
-    type: 'Lecture Hall',
   },
   {
     id: 'CB2-305',
@@ -31,7 +29,6 @@ export const mockRooms: Room[] = [
     location: 'Classroom Building 2, 3rd Floor',
     equipment: ['Computers', 'Projector', 'Whiteboard'],
     size: '80 sq.m.',
-    type: 'Computer Lab',
   },
   {
     id: 'SIT-401',
@@ -42,7 +39,6 @@ export const mockRooms: Room[] = [
     location: 'SIT Building, 4th Floor',
     equipment: ['Projector', 'Conference Table'],
     size: '40 sq.m.',
-    type: 'Meeting Room',
   },
   {
     id: 'CB4-208',
@@ -53,7 +49,6 @@ export const mockRooms: Room[] = [
     location: 'Classroom Building 4, 2nd Floor',
     equipment: ['Whiteboard'],
     size: '50 sq.m.',
-    type: 'Classroom',
   },
 ];
 
@@ -67,6 +62,7 @@ export interface Booking {
   status: 'Upcoming' | 'In Use' | 'Completed' | 'Cancelled';
   roomName?: string; // Add optional roomName for convenience in UI
   checkedIn?: boolean; // New field for Feature 1
+  objective: string; // Added objective field
 }
 
 export interface User {
