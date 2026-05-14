@@ -98,9 +98,23 @@ const RoomDetailPage: React.FC = () => {
 
         <div className="row">
           <div className="col-md-8">
-            <div className="room-image-container">
-              <img src={room.imageUrl} alt={room.name} className="img-fluid" />
+            <div className="room-image-container mb-4">
+              <img src={room.imageUrl} alt={room.name} className="img-fluid rounded" />
             </div>
+            
+            {room.panoramicUrl && (
+              <div className="room-360-container mb-4">
+                <h4>Room 360 View</h4>
+                <div className="ratio ratio-16x9">
+                  <iframe
+                    src={room.panoramicUrl}
+                    title="Insta360 Player"
+                    allowFullScreen
+                    className="rounded shadow-sm"
+                  ></iframe>
+                </div>
+              </div>
+            )}
           </div>
           <div className="col-md-4">
             <div className="room-info-card">

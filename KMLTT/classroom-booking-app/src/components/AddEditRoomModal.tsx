@@ -18,7 +18,8 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
   const [equipment, setEquipment] = useState(roomToEdit ? roomToEdit.equipment.join(', ') : '');
   const [size, setSize] = useState(roomToEdit ? roomToEdit.size : '');
   const [status, setStatus] = useState<RoomStatus>(roomToEdit ? roomToEdit.status : 'Available');
-  const [imageUrl, setImageUrl] = useState(roomToEdit ? roomToEdit.imageUrl || '' : ''); // Renamed from imageUrl360
+  const [imageUrl, setImageUrl] = useState(roomToEdit ? roomToEdit.imageUrl || '' : '');
+  const [panoramicUrl, setPanoramicUrl] = useState(roomToEdit ? roomToEdit.panoramicUrl || '' : ''); // Add this line
 
   // useEffect removed, relying on parent component to pass unique key for re-mounting when roomToEdit changes.
 
@@ -35,7 +36,8 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
       equipment: equipment.split(',').map(item => item.trim()),
       size,
       status,
-      imageUrl, // Use imageUrl directly from state
+      imageUrl,
+      panoramicUrl, // Add this line
     };
     onSave(roomData);
   };
@@ -57,8 +59,12 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
                   <input type="text" className="form-control" id="name" value={name} onChange={e => setName(e.target.value)} required />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="imageUrl" className="form-label">Image URL</label> {/* Renamed label */}
-                  <input type="url" className="form-control" id="imageUrl" value={imageUrl} onChange={e => setImageUrl(e.target.value)} /> {/* Renamed id, value, onChange */}
+                  <label htmlFor="imageUrl" className="form-label">Image URL</label>
+                  <input type="url" className="form-control" id="imageUrl" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="panoramicUrl" className="form-label">Image 360 (URL)</label>
+                  <input type="url" className="form-control" id="panoramicUrl" value={panoramicUrl} onChange={e => setPanoramicUrl(e.target.value)} placeholder="e.g. Insta360 share link" />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="capacity" className="form-label">Capacity</label>

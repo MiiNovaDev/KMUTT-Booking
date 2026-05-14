@@ -4,6 +4,7 @@ export interface Room {
   capacity: number;
   status: 'Available' | 'Unavailable';
   imageUrl: string;
+  panoramicUrl?: string; // Add this line
   location: string;
   equipment: string[];
   size: string;
