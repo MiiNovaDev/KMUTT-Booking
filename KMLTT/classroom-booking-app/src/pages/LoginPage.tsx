@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { Envelope, Lock } from 'react-bootstrap-icons';
-import { auth } from '../firebase'; // Import Firebase auth instance
+import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { API_BASE_URL } from '../services/api';
 import './LoginPage.css';
@@ -9,29 +9,25 @@ import './LoginPage.css';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null); // State for error messages
-  const navigate = useNavigate(); // Hook for navigation
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
-      // Sign in user with Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Get Firebase ID token
       const idToken = await user.getIdToken();
 
-      // Send ID token to backend for verification and to get user details/role
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}` // Send Firebase ID token
+          'Authorization': `Bearer ${idToken}`
         },
-        body: JSON.stringify({ idToken }), // Send idToken in body for backend verification
+        body: JSON.stringify({ idToken }),
       });
 
       if (!response.ok) {
@@ -39,17 +35,16 @@ const LoginPage: React.FC = () => {
         throw new Error(errorData.error || 'Login failed on backend.');
       }
 
-      const userData = await response.json(); // Backend should return user details and role
+      const userData = await response.json();
       
-      // Store user data in localStorage
       localStorage.setItem('userToken', idToken);
       localStorage.setItem('userUid', userData.uid);
       localStorage.setItem('userEmail', userData.email);
       localStorage.setItem('userRole', userData.role);
-      localStorage.setItem('studentId', userData.studentId); // Store studentId
+      localStorage.setItem('studentId', userData.studentId);
 
-      navigate('/'); // Redirect to home page
-    } catch (err: any) { // Catch any errors from Firebase or backend
+      navigate('/');
+    } catch (err: any) {
       console.error("Login error:", err);
       if (err.code === 'auth/invalid-email' || err.code === 'auth/user-not-found') {
         setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
@@ -66,7 +61,7 @@ const LoginPage: React.FC = () => {
       <div className="login-form">
         <div className="login-card-header">
           <div className="d-flex align-items-center justify-content-center gap-2 mb-1">
-            <img src="/logo.svg" alt="ECT Logo" width="40" height="40" style={{ filter: 'brightness(0) invert(1)' }} />
+            <img src={`/logo.svg?v=${new Date().getTime()}`} alt="ECT Logo" width="40" height="40" />
             <h1 className="login-logo mb-0">ECT</h1>
           </div>
           <h2 className="text-white fs-6">Classroom Booking</h2>
@@ -74,7 +69,7 @@ const LoginPage: React.FC = () => {
         <div className="login-card-body">
           <h3 className="login-title">เข้าสู่ระบบ</h3>
           <form onSubmit={handleLogin}>
-            {error && <div className="alert alert-danger">{error}</div>} {/* Display error */}
+            {error && <div className="alert alert-danger">{error}</div>}
             <div className="input-group mb-3">
               <span className="input-group-text">
                 <Envelope color="var(--text-secondary)" />
@@ -103,7 +98,6 @@ const LoginPage: React.FC = () => {
                 required
               />
             </div>
-            {/* Removed Login as Admin checkbox as role will be managed by backend/Firestore */}
             <button type="submit" className="btn btn-login">
               เข้าสู่ระบบ
             </button>

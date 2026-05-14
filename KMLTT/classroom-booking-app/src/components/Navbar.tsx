@@ -10,8 +10,6 @@ const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // localStorage is also cleared in ProtectedRoute's onAuthStateChanged,
-      // but clearing it here as well for immediate feedback and safety.
       localStorage.removeItem('userToken');
       localStorage.removeItem('userUid');
       localStorage.removeItem('userEmail');
@@ -27,7 +25,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div className="container-fluid">
         <Link className="navbar-brand d-flex align-items-center" to="/">
-          <img src="/logo.svg" alt="ECT Logo" width="30" height="30" className="me-2" />
+          <img src={`/logo.svg?v=${new Date().getTime()}`} alt="ECT Logo" width="30" height="30" className="me-2" />
           ECT Booking
         </Link>
         <button
