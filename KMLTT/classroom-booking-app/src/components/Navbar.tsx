@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { BookFill } from 'react-bootstrap-icons';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import './Navbar.css';
