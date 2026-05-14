@@ -73,7 +73,10 @@ const RegisterPage: React.FC = () => {
     <div className="login-container">
       <div className="login-form">
         <div className="login-card-header">
-          <h1 className="login-logo">ECT</h1>
+          <div className="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <img src="/logo.svg" alt="ECT Logo" width="40" height="40" style={{ filter: 'brightness(0) invert(1)' }} />
+            <h1 className="login-logo mb-0">ECT</h1>
+          </div>
           <h2 className="text-white fs-6">Classroom Booking</h2>
         </div>
         <div className="login-card-body">
@@ -132,7 +135,7 @@ const RegisterPage: React.FC = () => {
                 id="confirmPassword"
                 placeholder="ยืนยันรหัสผ่าน"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
