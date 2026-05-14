@@ -114,6 +114,80 @@
   border-color: var(--kmut-red);
 }
 
+/* Availability Timeline Styles */
+.availability-section {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #eee;
+}
+
+.timeline-wrapper {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.timeline-bar {
+  display: flex;
+  height: 60px;
+  min-width: 600px; /* Ensure slots don't get too squashed on small screens */
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.timeline-slot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-right: 1px solid rgba(255,255,255,0.3);
+  transition: opacity 0.2s;
+}
+
+.timeline-slot:last-child {
+  border-right: none;
+}
+
+.timeline-slot.is-available {
+  background-color: #28a745; /* Success Green */
+  color: white;
+}
+
+.timeline-slot.is-busy {
+  background-color: #dc3545; /* Danger Red */
+  color: white;
+}
+
+.slot-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.available {
+  background-color: #28a745;
+}
+
+.legend-dot.busy {
+  background-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .availability-section {
+    padding: 1rem;
+  }
+}
+
 @media (max-width: 576px) {
   .btn-book-room {
     margin-top: 1.5rem;

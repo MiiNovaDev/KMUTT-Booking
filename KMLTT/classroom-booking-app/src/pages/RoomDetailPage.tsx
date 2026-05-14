@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { getRooms } from '../services/api';
-import type { Room } from '../services/mockData';
-import { PeopleFill, GeoAltFill, AspectRatio, Tools } from 'react-bootstrap-icons';
+import { getRooms, subscribeToBookings } from '../services/api';
+import type { Room, Booking } from '../services/mockData';
+import { PeopleFill, GeoAltFill, AspectRatio, Tools, Calendar3 } from 'react-bootstrap-icons';
 import './RoomDetailPage.css';
 
 // Declare pannellum for TypeScript
@@ -44,11 +44,15 @@ const RoomDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const [room, setRoom] = useState<Room | null>(null);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Date management
   const queryParams = new URLSearchParams(location.search);
-  const selectedDate = queryParams.get('date');
+  const initialDate = queryParams.get('date') || new Date().toISOString().split('T')[0];
+  const [viewDate, setViewDate] = useState(initialDate);
+
   const selectedStartTime = queryParams.get('startTime');
   const selectedEndTime = queryParams.get('endTime');
 
@@ -58,17 +62,53 @@ const RoomDetailPage: React.FC = () => {
         setLoading(true);
         const fetchedRooms = await getRooms();
         const foundRoom = fetchedRooms.find((r: Room) => r.id === id);
-        console.log("Fetched Room Data:", foundRoom);
         setRoom(foundRoom || null);
       } catch (err) {
-        setError('Failed to fetch data. Please ensure the backend server is running.');
+        setError('Failed to fetch data.');
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
+
+    // Subscribe to real-time bookings
+    const unsubscribe = subscribeToBookings((fetchedBookings) => {
+      setAllBookings(fetchedBookings);
+    });
+
+    return () => unsubscribe();
   }, [id]);
+
+  // Filter bookings for this room on the selected date
+  const roomBookingsOnDate = useMemo(() => {
+    return allBookings.filter(b => {
+      if (b.roomId !== id || b.status === 'Cancelled') return false;
+      const bDate = new Date(b.startTime).toISOString().split('T')[0];
+      return bDate === viewDate;
+    });
+  }, [allBookings, id, viewDate]);
+
+  // Generate 12 slots from 08:00 to 20:00
+  const timelineSlots = useMemo(() => {
+    const slots = [];
+    for (let hour = 8; hour < 20; hour++) {
+      const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+      const nextTimeStr = `${(hour + 1).toString().padStart(2, '0')}:00`;
+      
+      const slotStart = new Date(`${viewDate}T${timeStr}:00`);
+      const slotEnd = new Date(`${viewDate}T${nextTimeStr}:00`);
+
+      const isBusy = roomBookingsOnDate.some(b => {
+        const bStart = new Date(b.startTime);
+        const bEnd = new Date(b.endTime);
+        return slotStart < bEnd && slotEnd > bStart;
+      });
+
+      slots.push({ time: timeStr, isBusy });
+    }
+    return slots;
+  }, [viewDate, roomBookingsOnDate]);
 
   if (loading) {
     return (
@@ -98,7 +138,7 @@ const RoomDetailPage: React.FC = () => {
     );
   }
 
-  const confirmationLink = `/confirmation?roomId=${room.id}&date=${selectedDate || ''}&startTime=${selectedStartTime || ''}&endTime=${selectedEndTime || ''}`;
+  const confirmationLink = `/confirmation?roomId=${room.id}&date=${viewDate}&startTime=${selectedStartTime || ''}&endTime=${selectedEndTime || ''}`;
 
   return (
     <div>
@@ -122,7 +162,44 @@ const RoomDetailPage: React.FC = () => {
                 <img src={room.imageUrl} alt={room.name} className="img-fluid rounded shadow-sm" />
               </div>
             )}
+
+            {/* Availability Timeline */}
+            <div className="availability-section mt-5">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4 className="m-0"><Calendar3 className="me-2" />ตารางการใช้งานห้อง</h4>
+                <input 
+                  type="date" 
+                  className="form-control w-auto" 
+                  value={viewDate} 
+                  onChange={(e) => setViewDate(e.target.value)}
+                />
+              </div>
+
+              <div className="timeline-wrapper shadow-sm">
+                <div className="timeline-bar">
+                  {timelineSlots.map(slot => (
+                    <div 
+                      key={slot.time} 
+                      className={`timeline-slot ${slot.isBusy ? 'is-busy' : 'is-available'}`}
+                    >
+                      <span className="slot-label">{slot.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="d-flex gap-4 mt-3 justify-content-center">
+                <div className="d-flex align-items-center">
+                  <div className="legend-dot available me-2"></div>
+                  <small>ว่าง (Available)</small>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div className="legend-dot busy me-2"></div>
+                  <small>ไม่ว่าง (Reserved)</small>
+                </div>
+              </div>
+            </div>
           </div>
+
           <div className="col-md-4">
             <div className="room-info-card">
               <h4>ข้อมูลห้อง</h4>
@@ -142,9 +219,10 @@ const RoomDetailPage: React.FC = () => {
                 <GeoAltFill className="icon" />
                 <span>สถานที่: {room.location}</span>
               </div>
-              {selectedDate && selectedStartTime && selectedEndTime ? (
+              
+              {viewDate === initialDate && selectedStartTime && selectedEndTime ? (
                 <Link to={confirmationLink} className="btn btn-book-room mt-3">
-                  จองห้องนี้
+                  จองห้องนี้ ({selectedStartTime} - {selectedEndTime})
                 </Link>
               ) : (
                 <Link to="/booking" className="btn btn-book-room mt-3">
