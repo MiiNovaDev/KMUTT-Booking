@@ -64,7 +64,7 @@ const AddEditRoomModal: React.FC<AddEditRoomModalProps> = ({ show, onClose, onSa
                 </div>
                 <div className="mb-3">
                   <label htmlFor="panoramicUrl" className="form-label">Image 360 (URL)</label>
-                  <input type="url" className="form-control" id="panoramicUrl" value={panoramicUrl} onChange={e => setPanoramicUrl(e.target.value)} placeholder="e.g. Insta360 share link" />
+                  <input type="url" className="form-control" id="panoramicUrl" value={panoramicUrl} onChange={e => setPanoramicUrl(e.target.value)} />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="capacity" className="form-label">Capacity</label>

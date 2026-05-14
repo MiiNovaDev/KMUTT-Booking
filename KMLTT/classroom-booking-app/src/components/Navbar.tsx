@@ -27,8 +27,9 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
-          <BookFill /> ECT Booking
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img src="/logo.svg" alt="KMLTT Logo" width="30" height="30" className="me-2" />
+          KMLTT Booking
         </Link>
         <button
           className="navbar-toggler"
