@@ -1,19 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom'; // Import useLocation
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { getRooms } from '../services/api'; // Import only getRooms
-import type { Room } from '../services/mockData'; // Use types
+import { getRooms } from '../services/api';
+import type { Room } from '../services/mockData';
 import { PeopleFill, GeoAltFill, AspectRatio, Tools } from 'react-bootstrap-icons';
 import './RoomDetailPage.css';
 
+// Declare pannellum for TypeScript
+declare global {
+  interface Window {
+    pannellum: any;
+  }
+}
+
+const PannellumViewer: React.FC<{ imageUrl: string }> = ({ imageUrl }) => {
+  const viewerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (viewerRef.current && window.pannellum) {
+      const viewer = window.pannellum.viewer(viewerRef.current, {
+        type: 'equirectangular',
+        panorama: imageUrl,
+        autoLoad: true,
+        compass: true,
+      });
+
+      return () => {
+        viewer.destroy();
+      };
+    }
+  }, [imageUrl]);
+
+  return (
+    <div 
+      ref={viewerRef} 
+      style={{ width: '100%', height: '100%' }} 
+      className="rounded shadow-sm"
+    />
+  );
+};
+
 const RoomDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const location = useLocation(); // Hook to access URL parameters
+  const location = useLocation();
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Extract booking details from URL parameters
   const queryParams = new URLSearchParams(location.search);
   const selectedDate = queryParams.get('date');
   const selectedStartTime = queryParams.get('startTime');
@@ -24,8 +57,8 @@ const RoomDetailPage: React.FC = () => {
       try {
         setLoading(true);
         const fetchedRooms = await getRooms();
-        // Removed getBookings() as it's not directly used here
         const foundRoom = fetchedRooms.find((r: Room) => r.id === id);
+        console.log("Fetched Room Data:", foundRoom);
         setRoom(foundRoom || null);
       } catch (err) {
         setError('Failed to fetch data. Please ensure the backend server is running.');
@@ -35,13 +68,7 @@ const RoomDetailPage: React.FC = () => {
       }
     }
     fetchData();
-  }, [id]); // Re-fetch if ID changes
-
-  // Debugging logs for the button issue
-  console.log("RoomDetailPage: selectedDate:", selectedDate);
-  console.log("RoomDetailPage: selectedStartTime:", selectedStartTime);
-  console.log("RoomDetailPage: selectedEndTime:", selectedEndTime);
-  console.log("RoomDetailPage: button condition:", selectedDate && selectedStartTime && selectedEndTime);
+  }, [id]);
 
   if (loading) {
     return (
@@ -57,37 +84,20 @@ const RoomDetailPage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error || !room) {
     return (
       <div>
         <Navbar />
         <div className="container mt-5 text-center">
           <div className="alert alert-danger" role="alert">
-            {error}
+            {error || 'Room Not Found'}
           </div>
+          <Link to="/booking" className="btn btn-primary mt-3">Back to Booking</Link>
         </div>
       </div>
     );
   }
 
-  if (!room) {
-    return (
-      <div>
-        <Navbar />
-        <div className="container mt-5">
-          <h1 className="text-center section-header">Room Not Found</h1>
-          <p className="text-center">The room you are looking for does not exist.</p>
-          <div className="text-center">
-            <Link to="/booking" className="btn btn-primary mt-3">
-              Back to Booking
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Construct link to confirmation page with booking details
   const confirmationLink = `/confirmation?roomId=${room.id}&date=${selectedDate || ''}&startTime=${selectedStartTime || ''}&endTime=${selectedEndTime || ''}`;
 
   return (
@@ -100,17 +110,11 @@ const RoomDetailPage: React.FC = () => {
           <div className="col-md-8">
             {room.panoramicUrl ? (
               <div className="room-360-container mb-4">
-                <div className="ratio ratio-16x9">
-                  <iframe
-                    src={room.panoramicUrl}
-                    title="Insta360 Player"
-                    allowFullScreen
-                    className="rounded shadow-sm"
-                    style={{ border: 'none' }}
-                  ></iframe>
+                <div className="ratio ratio-16x9 shadow-sm rounded overflow-hidden bg-dark border">
+                  <PannellumViewer imageUrl={room.panoramicUrl} />
                 </div>
                 <p className="text-muted mt-2 text-center">
-                  <small>หมุนเพื่อดูภาพ 360 องศา</small>
+                  <small>คลิกค้างและลากเพื่อหมุนดูภาพ 360 องศา</small>
                 </p>
               </div>
             ) : (
