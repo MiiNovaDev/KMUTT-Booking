@@ -135,7 +135,7 @@ const RegisterPage: React.FC = () => {
                 id="confirmPassword"
                 placeholder="ยืนยันรหัสผ่าน"
                 value={confirmPassword}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
             </div>
