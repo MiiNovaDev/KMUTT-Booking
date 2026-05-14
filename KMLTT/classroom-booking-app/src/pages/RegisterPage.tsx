@@ -83,6 +83,7 @@ const RegisterPage: React.FC = () => {
               </span>
               <input
                 type="text"
+                name="studentId"
                 className="form-control"
                 id="studentId"
                 placeholder="รหัสนักศึกษา"
@@ -97,11 +98,13 @@ const RegisterPage: React.FC = () => {
               </span>
               <input
                 type="email"
+                name="email"
                 className="form-control"
                 id="email"
                 placeholder="อีเมล"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required
               />
             </div>
@@ -111,11 +114,13 @@ const RegisterPage: React.FC = () => {
               </span>
               <input
                 type="password"
+                name="password"
                 className="form-control"
                 id="password"
                 placeholder="รหัสผ่าน"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
                 required
               />
             </div>
@@ -125,11 +130,13 @@ const RegisterPage: React.FC = () => {
               </span>
               <input
                 type="password"
+                name="confirmPassword"
                 className="form-control"
                 id="confirmPassword"
                 placeholder="ยืนยันรหัสผ่าน"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
                 required
               />
             </div>

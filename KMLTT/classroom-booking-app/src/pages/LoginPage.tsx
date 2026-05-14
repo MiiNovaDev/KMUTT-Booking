@@ -75,12 +75,14 @@ const LoginPage: React.FC = () => {
                 <Envelope color="var(--text-secondary)" />
               </span>
               <input
-                type="text"
+                type="email"
+                name="email"
                 className="form-control"
                 id="email"
                 placeholder="อีเมล"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username email"
                 required
               />
             </div>
@@ -90,11 +92,13 @@ const LoginPage: React.FC = () => {
               </span>
               <input
                 type="password"
+                name="password"
                 className="form-control"
                 id="password"
                 placeholder="รหัสผ่าน"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 required
               />
             </div>
