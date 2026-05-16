@@ -15,6 +15,7 @@ import AllRoomsPage from './pages/AllRoomsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotFoundPage from './pages/NotFoundPage';
 import DevDashboardPage from './pages/DevDashboardPage'; // Import DevDashboardPage
+import SystemConfigPage from './pages/SystemConfigPage'; // Import SystemConfigPage
 
 function App() {
   return (
@@ -107,6 +108,14 @@ function App() {
         element={
           <ProtectedRoute adminOnly={true}>
             <DevDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dev/config"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <SystemConfigPage />
           </ProtectedRoute>
         }
       />

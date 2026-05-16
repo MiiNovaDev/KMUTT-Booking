@@ -4,6 +4,18 @@ import type { Room, Booking } from './mockData';
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api'; 
 
+// --- System Configuration (Global State for Speed) ---
+let globalConfig = {
+  autoReleaseMinutes: 15,
+  maxBookingDaysAdvance: 14,
+  maintenanceMode: false
+};
+
+// Initial fetch of config
+getConfig().then(cfg => {
+  globalConfig = { ...globalConfig, ...cfg };
+}).catch(err => console.error("Failed to load initial config:", err));
+
 // --- Real-time Subscriptions (Feature 3) ---
 
 export function subscribeToRooms(callback: (rooms: Room[]) => void) {
@@ -58,8 +70,6 @@ export function subscribeToBookings(
 
 // --- Auto-Release Logic (Feature 1) ---
 
-const RELEASE_TIMEOUT_MINUTES = 15;
-
 async function checkAutoRelease(bookings: Booking[]) {
   const now = new Date();
   
@@ -69,7 +79,8 @@ async function checkAutoRelease(bookings: Booking[]) {
     const startTime = new Date(b.startTime);
     const diffInMinutes = (now.getTime() - startTime.getTime()) / (1000 * 60);
     
-    return diffInMinutes >= RELEASE_TIMEOUT_MINUTES;
+    // Use dynamic value from config
+    return diffInMinutes >= globalConfig.autoReleaseMinutes;
   });
 
   for (const booking of expiredBookings) {
@@ -265,6 +276,41 @@ export async function getStats() {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   return await response.json();
+}
+
+export async function getConfig() {
+  const response = await fetch(`${API_BASE_URL}/config`);
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error(`getConfig failed: ${response.status} ${response.statusText}`, errorBody);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const cfg = await response.json();
+  globalConfig = { ...globalConfig, ...cfg }; // Update global cache
+  return cfg;
+}
+
+export async function updateConfig(configData: any) {
+  const response = await fetch(`${API_BASE_URL}/config`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(configData),
+  });
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error(`updateConfig failed: ${response.status} ${response.statusText}`, errorBody);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const cfg = await response.json();
+  globalConfig = { ...globalConfig, ...cfg }; // Update global cache
+  return cfg;
+}
+
+// Helper to get current cache
+export function getCachedConfig() {
+  return globalConfig;
 }
 
 // TODO: Further refine types for roomData, bookingData, userData

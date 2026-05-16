@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import RoomCard from '../components/RoomCard';
 import { CalendarDate, Clock, People } from 'react-bootstrap-icons';
-import { subscribeToRooms, subscribeToBookings } from '../services/api'; // Import real-time subscriptions
+import { subscribeToRooms, subscribeToBookings, getConfig } from '../services/api'; // Import getConfig
 import type { Room, Booking } from '../services/mockData'; // Use types
 import './BookingPage.css';
 
@@ -11,6 +11,7 @@ const BookingPage: React.FC = () => {
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('10:00');
   const [capacity, setCapacity] = useState(1);
+  const [maxDays, setMaxDays] = useState(14); // State for dynamic max days
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -19,17 +20,29 @@ const BookingPage: React.FC = () => {
   const [dateError, setDateError] = useState<string | null>(null); // New state for date validation error
   const [pastTimeError, setPastTimeError] = useState<string | null>(null); // New state for past time validation error
 
-  // Calculate today's date and max booking date (14 days from today)
+  // Calculate today's date and max booking date
   const today = new Date();
   const todayISO = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
-  const maxBookingDate = new Date();
-  maxBookingDate.setDate(today.getDate() + 14);
-  const maxBookingDateISO = maxBookingDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+  
+  const maxBookingDate = useMemo(() => {
+    const d = new Date();
+    d.setDate(today.getDate() + maxDays);
+    return d;
+  }, [maxDays]);
+  
+  const maxBookingDateISO = useMemo(() => maxBookingDate.toISOString().split('T')[0], [maxBookingDate]);
 
 
   useEffect(() => {
     setLoading(true);
     
+    // Fetch system config first
+    getConfig().then(cfg => {
+        if (cfg.maxBookingDaysAdvance) {
+            setMaxDays(cfg.maxBookingDaysAdvance);
+        }
+    }).catch(err => console.error("Failed to fetch config:", err));
+
     const unsubscribeRooms = subscribeToRooms((fetchedRooms) => {
       setRooms(fetchedRooms);
       setLoading(false);

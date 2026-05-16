@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { getStats } from '../services/api';
 import './AdminPage.css'; // Reusing admin styles
+import { Link } from 'react-router-dom';
 
 const DevDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -43,7 +44,10 @@ const DevDashboardPage: React.FC = () => {
       <div className="container admin-container">
         <div className="admin-header">
           <h1>Dev Dashboard (System Health)</h1>
-          <button className="btn btn-outline-primary" onClick={fetchStats}>Refresh</button>
+          <div className="d-flex gap-2">
+            <Link to="/dev/config" className="btn btn-outline-dark">Settings (ตั้งค่าระบบ)</Link>
+            <button className="btn btn-outline-primary" onClick={fetchStats}>Refresh</button>
+          </div>
         </div>
 
         <div className="row mt-4">
