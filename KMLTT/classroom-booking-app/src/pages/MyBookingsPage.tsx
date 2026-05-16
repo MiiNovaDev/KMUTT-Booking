@@ -24,7 +24,7 @@ const MyBookingsPage: React.FC = () => {
     const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
       setBookings(fetchedBookings);
       setLoading(false);
-    }, userUid);
+    }, { userId: userUid });
 
     return () => {
       unsubscribeRooms();

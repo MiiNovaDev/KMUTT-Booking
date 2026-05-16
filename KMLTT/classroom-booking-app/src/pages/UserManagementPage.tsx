@@ -3,11 +3,14 @@ import Navbar from '../components/Navbar';
 import type { User } from '../services/mockData';
 import { getUsers, updateUserRole } from '../services/api';
 import './AdminPage.css'; // Reusing admin styles
+import { useNavigate } from 'react-router-dom';
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const currentUserRole = localStorage.getItem('userRole');
 
   useEffect(() => {
     fetchUsers();
@@ -18,11 +21,10 @@ const UserManagementPage: React.FC = () => {
       setLoading(true);
       const fetchedUsers = await getUsers();
       
-      // Sort: ADMIN first, then USER
+      // Sort: DEV first, then ADMIN, then USER
       const sortedUsers = [...fetchedUsers].sort((a, b) => {
-        if (a.role === 'ADMIN' && b.role !== 'ADMIN') return -1;
-        if (a.role !== 'ADMIN' && b.role === 'ADMIN') return 1;
-        return 0;
+        const roleOrder: { [key: string]: number } = { 'DEV': 0, 'ADMIN': 1, 'USER': 2 };
+        return (roleOrder[a.role] ?? 99) - (roleOrder[b.role] ?? 99);
       });
       
       setUsers(sortedUsers);
@@ -45,6 +47,17 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
+  const handleImpersonate = (user: User) => {
+    const impersonationData = {
+      uid: user.uid,
+      role: user.role,
+      studentId: user.studentId
+    };
+    sessionStorage.setItem('impersonation', JSON.stringify(impersonationData));
+    alert(`กำลังสวมสิทธิ์เป็น ${user.studentId}`);
+    navigate('/');
+  };
+
   if (loading) {
     return (
       <div>
@@ -58,6 +71,14 @@ const UserManagementPage: React.FC = () => {
       </div>
     );
   }
+
+  const getBadgeClass = (role: string) => {
+    switch (role) {
+      case 'DEV': return 'bg-dark';
+      case 'ADMIN': return 'bg-danger';
+      default: return 'bg-primary';
+    }
+  };
 
   return (
     <div>
@@ -77,6 +98,7 @@ const UserManagementPage: React.FC = () => {
                 <th>อีเมล</th>
                 <th>สิทธิ์ปัจจุบัน</th>
                 <th>เปลี่ยนสิทธิ์</th>
+                {currentUserRole === 'DEV' && <th>Dev Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -85,7 +107,7 @@ const UserManagementPage: React.FC = () => {
                   <td>{user.studentId}</td>
                   <td>{user.email}</td>
                   <td>
-                    <span className={`badge ${user.role === 'ADMIN' ? 'bg-danger' : 'bg-primary'}`}>
+                    <span className={`badge ${getBadgeClass(user.role)}`}>
                       {user.role}
                     </span>
                   </td>
@@ -94,11 +116,25 @@ const UserManagementPage: React.FC = () => {
                       className="form-select form-select-sm w-auto"
                       value={user.role}
                       onChange={(e) => handleRoleChange(user.uid, e.target.value)}
+                      disabled={user.role === 'DEV'}
                     >
                       <option value="USER">USER</option>
                       <option value="ADMIN">ADMIN</option>
+                      {user.role === 'DEV' && <option value="DEV">DEV</option>}
                     </select>
                   </td>
+                  {currentUserRole === 'DEV' && (
+                    <td>
+                      {user.role !== 'DEV' && (
+                        <button 
+                          className="btn btn-sm btn-outline-info"
+                          onClick={() => handleImpersonate(user)}
+                        >
+                          View as User
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

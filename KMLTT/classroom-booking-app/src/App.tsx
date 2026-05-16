@@ -14,6 +14,7 @@ import UserManagementPage from './pages/UserManagementPage';
 import AllRoomsPage from './pages/AllRoomsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotFoundPage from './pages/NotFoundPage';
+import DevDashboardPage from './pages/DevDashboardPage'; // Import DevDashboardPage
 
 function App() {
   return (
@@ -98,6 +99,14 @@ function App() {
         element={
           <ProtectedRoute adminOnly={true}>
             <UserManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dev/dashboard"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <DevDashboardPage />
           </ProtectedRoute>
         }
       />

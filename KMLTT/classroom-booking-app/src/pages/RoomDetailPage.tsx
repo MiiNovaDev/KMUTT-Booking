@@ -72,10 +72,10 @@ const RoomDetailPage: React.FC = () => {
     }
     fetchData();
 
-    // Subscribe to real-time bookings
+    // Subscribe to real-time bookings - use onlyRecent to speed up initial load
     const unsubscribe = subscribeToBookings((fetchedBookings) => {
       setAllBookings(fetchedBookings);
-    });
+    }, { onlyRecent: true });
 
     return () => unsubscribe();
   }, [id]);

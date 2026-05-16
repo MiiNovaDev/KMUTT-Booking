@@ -8,7 +8,8 @@ import type { Room, Booking } from '../services/mockData'; // Use types
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
-  const isAdmin = localStorage.getItem('userRole') === 'ADMIN'; 
+  const role = localStorage.getItem('userRole');
+  const isPrivileged = role === 'ADMIN' || role === 'DEV';
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,10 +23,10 @@ const HomePage: React.FC = () => {
       setLoading(false);
     });
 
-    // Subscribe to real-time bookings
+    // Subscribe to real-time bookings - ONLY RECENT ones for speed
     const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
       setBookings(fetchedBookings);
-    });
+    }, { onlyRecent: true });
 
     // Cleanup on unmount
     return () => {
@@ -73,7 +74,7 @@ const HomePage: React.FC = () => {
               <BuildingsFill className="icon" />
               <span>ดูห้องทั้งหมด</span>
             </Link>
-            {isAdmin && (
+            {isPrivileged && (
               <Link to="/admin" className="quick-action-btn">
                 <GearFill className="icon" />
                 <span>สำหรับผู้ดูแล</span>

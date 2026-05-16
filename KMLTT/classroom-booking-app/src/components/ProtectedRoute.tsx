@@ -19,9 +19,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
       console.log("ProtectedRoute: onAuthStateChanged triggered", user ? `User: ${user.email}` : "No user");
       if (user) {
         setIsAuthenticated(true);
-        const role = localStorage.getItem('userRole');
-        console.log("ProtectedRoute: User is authenticated. Role from localStorage:", role);
-        setUserRole(role); 
+        
+        // Check for impersonation
+        const impersonation = sessionStorage.getItem('impersonation');
+        if (impersonation) {
+          const { role } = JSON.parse(impersonation);
+          setUserRole(role);
+        } else {
+          const role = localStorage.getItem('userRole');
+          setUserRole(role); 
+        }
       } else {
         console.log("ProtectedRoute: User is NOT authenticated. Clearing localStorage.");
         setIsAuthenticated(false);
@@ -32,6 +39,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userRole');
         localStorage.removeItem('studentId');
+        sessionStorage.removeItem('impersonation');
       }
       setLoading(false);
     });
@@ -54,7 +62,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     return <Navigate to="/login" replace />;
   }
 
-  if (adminOnly && userRole !== 'ADMIN') {
+  // If impersonating, role is overridden to target user's role
+  if (adminOnly && userRole !== 'ADMIN' && userRole !== 'DEV') {
     alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้'); // Alert for unauthorized admin access
     return <Navigate to="/" replace />;
   }

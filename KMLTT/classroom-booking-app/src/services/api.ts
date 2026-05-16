@@ -1,4 +1,4 @@
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { firestoreDb } from '../firebase';
 import type { Room, Booking } from './mockData';
 
@@ -13,10 +13,29 @@ export function subscribeToRooms(callback: (rooms: Room[]) => void) {
   });
 }
 
-export function subscribeToBookings(callback: (bookings: Booking[]) => void, userId?: string) {
-  let q = query(collection(firestoreDb, 'bookings'));
-  if (userId) {
-    q = query(collection(firestoreDb, 'bookings'), where('userId', '==', userId));
+/**
+ * Subscribes to bookings with optional filtering.
+ * @param callback Callback function with data
+ * @param options Filtering options: userId, onlyRecent (last 24h + future)
+ */
+export function subscribeToBookings(
+  callback: (bookings: Booking[]) => void, 
+  options: { userId?: string, onlyRecent?: boolean } = {}
+) {
+  let q = query(collection(firestoreDb, 'bookings'), orderBy('startTime', 'desc'));
+
+  if (options.userId) {
+    q = query(q, where('userId', '==', options.userId));
+  }
+
+  if (options.onlyRecent) {
+    // Only get bookings from 24 hours ago onwards
+    const yesterday = new Date();
+    yesterday.setHours(yesterday.getHours() - 24);
+    q = query(q, where('startTime', '>=', Timestamp.fromDate(yesterday)));
+  } else {
+    // Even for full list, limit to 200 for performance if not specified
+    q = query(q, limit(200));
   }
   
   return onSnapshot(q, (snapshot) => {
@@ -233,6 +252,16 @@ export async function updateUserRole(uid: string, role: string) {
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     console.error(`updateUserRole failed: ${response.status} ${response.statusText}`, errorBody);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return await response.json();
+}
+
+export async function getStats() {
+  const response = await fetch(`${API_BASE_URL}/admin/stats`);
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error(`getStats failed: ${response.status} ${response.statusText}`, errorBody);
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   return await response.json();

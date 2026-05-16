@@ -71,7 +71,7 @@ export interface User {
   studentId: string;
   displayName: string;
   email: string;
-  role: 'STUDENT' | 'ADMIN';
+  role: 'USER' | 'ADMIN' | 'DEV';
 }
 
 // Helper to set a specific time for today

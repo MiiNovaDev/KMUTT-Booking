@@ -125,6 +125,8 @@ const AdminPage: React.FC = () => {
   const visibleBookings = bookings.filter(booking => getBookingDisplayInfo(booking).isVisible);
   const sortedVisibleBookings = sortBookings(visibleBookings);
 
+  const userRole = localStorage.getItem('userRole');
+
   return (
     <div>
       <Navbar />
@@ -132,6 +134,11 @@ const AdminPage: React.FC = () => {
         <div className="admin-header">
           <h1>Admin Panel</h1>
           <div className="d-flex flex-wrap gap-2">
+            {userRole === 'DEV' && (
+              <Link to="/dev/dashboard" className="btn btn-dark">
+                System Dashboard (Dev Only)
+              </Link>
+            )}
             <Link to="/admin/users" className="btn btn-warning">
               Manage Users (จัดการสมาชิก)
             </Link>

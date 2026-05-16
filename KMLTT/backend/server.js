@@ -223,9 +223,52 @@ app.delete('/api/bookings/:id', async (req, res) => {
 app.put('/api/users/:uid/role', async (req, res) => {
   const { uid } = req.params;
   const { role } = req.body;
+
+  if (role === 'DEV') {
+    return res.status(403).json({ error: 'Cannot assign DEV role via API.' });
+  }
+
   try {
+    // Prevent modifying users who already have the DEV role
+    const userDoc = await db.collection('users').doc(uid).get();
+    if (userDoc.exists && userDoc.data().role === 'DEV') {
+      return res.status(403).json({ error: 'Cannot modify DEV user role via API.' });
+    }
+
     const updatedUser = await firestore.updateUser(uid, { role: role });
     res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const rooms = await firestore.getRooms();
+    const bookings = await firestore.getBookings();
+    const users = await firestore.getUsers();
+
+    const stats = {
+      totalRooms: rooms.length,
+      totalBookings: bookings.length,
+      totalUsers: users.length,
+      roomStatus: {
+        available: rooms.filter(r => r.status === 'Available').length,
+        unavailable: rooms.filter(r => r.status === 'Unavailable').length,
+      },
+      bookingStatus: {
+        upcoming: bookings.filter(b => b.status === 'Upcoming').length,
+        inUse: bookings.filter(b => b.status === 'In Use').length,
+        completed: bookings.filter(b => b.status === 'Completed').length,
+        cancelled: bookings.filter(b => b.status === 'Cancelled').length,
+      },
+      userRoles: {
+        dev: users.filter(u => u.role === 'DEV').length,
+        admin: users.filter(u => u.role === 'ADMIN').length,
+        user: users.filter(u => u.role === 'USER').length,
+      }
+    };
+    res.json(stats);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

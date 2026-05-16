@@ -37,7 +37,7 @@ const BookingPage: React.FC = () => {
 
     const unsubscribeBookings = subscribeToBookings((fetchedBookings) => {
       setBookings(fetchedBookings);
-    });
+    }, { onlyRecent: true });
 
     return () => {
       unsubscribeRooms();
