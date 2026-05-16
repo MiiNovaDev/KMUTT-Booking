@@ -31,8 +31,7 @@ const Navbar: React.FC = () => {
 
   const getDisplayRole = (role: string) => {
     if (role === 'DEV') return 'Developer';
-    if (role === 'ADMIN') return 'Administrator';
-    return 'User';
+    return role; // Return 'ADMIN' or 'USER' as is
   };
 
   return (

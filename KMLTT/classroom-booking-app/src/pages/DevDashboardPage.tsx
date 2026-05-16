@@ -101,10 +101,10 @@ const DevDashboardPage: React.FC = () => {
                     <span>Developer</span> <span>{stats?.userRoles?.dev}</span>
                   </div>
                   <div className="d-flex justify-content-between mb-1 text-danger">
-                    <span>Administrator</span> <span>{stats?.userRoles?.admin}</span>
+                    <span>ADMIN</span> <span>{stats?.userRoles?.admin}</span>
                   </div>
                   <div className="d-flex justify-content-between mb-1 text-primary">
-                    <span>User</span> <span>{stats?.userRoles?.user}</span>
+                    <span>USER</span> <span>{stats?.userRoles?.user}</span>
                   </div>
                 </div>
               </div>
