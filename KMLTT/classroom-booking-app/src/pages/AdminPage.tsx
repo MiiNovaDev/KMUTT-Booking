@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { addRoom, updateRoom, deleteRoom, getUsers, subscribeToRooms, subscribeToBookings } from '../services/api';
 import './AdminPage.css';
 import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils';
-import { getActiveUserContext } from '../utils/authUtils';
 
 const AdminPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,7 +125,7 @@ const AdminPage: React.FC = () => {
   const visibleBookings = bookings.filter(booking => getBookingDisplayInfo(booking).isVisible);
   const sortedVisibleBookings = sortBookings(visibleBookings);
 
-  const { role: userRole } = getActiveUserContext();
+  const userRole = localStorage.getItem('userRole');
 
   return (
     <div>

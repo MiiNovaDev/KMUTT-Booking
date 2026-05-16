@@ -6,10 +6,9 @@ import { BuildingsFill, GearFill } from 'react-bootstrap-icons';
 import { subscribeToRooms, subscribeToBookings } from '../services/api'; // Import subscriptions
 import type { Room, Booking } from '../services/mockData'; // Use types
 import './HomePage.css';
-import { getActiveUserContext } from '../utils/authUtils';
 
 const HomePage: React.FC = () => {
-  const { role, uid } = getActiveUserContext();
+  const role = localStorage.getItem('userRole');
   const isPrivileged = role === 'ADMIN' || role === 'DEV';
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -52,8 +51,9 @@ const HomePage: React.FC = () => {
     );
   }
 
+  const userUid = localStorage.getItem('userUid');
   const userUpcomingBookingsCount = bookings.filter(
-    b => b.status === 'Upcoming' && b.userId === uid
+    b => b.status === 'Upcoming' && b.userId === userUid
   ).length;
 
   return (

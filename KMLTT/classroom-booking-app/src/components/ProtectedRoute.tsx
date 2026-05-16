@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebase'; // Import Firebase auth instance
 import { onAuthStateChanged } from "firebase/auth";
-import { getActiveUserContext } from '../utils/authUtils';
 
 interface ProtectedRouteProps {
   children: React.ReactElement;
@@ -20,10 +19,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
       console.log("ProtectedRoute: onAuthStateChanged triggered", user ? `User: ${user.email}` : "No user");
       if (user) {
         setIsAuthenticated(true);
-        const context = getActiveUserContext();
-        setUserRole(context.role); 
+        const role = localStorage.getItem('userRole');
+        setUserRole(role); 
       } else {
-        console.log("ProtectedRoute: User is NOT authenticated. Clearing data.");
+        console.log("ProtectedRoute: User is NOT authenticated. Clearing localStorage.");
         setIsAuthenticated(false);
         setUserRole(null);
         // Clear local storage if user logs out
@@ -32,7 +31,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userRole');
         localStorage.removeItem('studentId');
-        sessionStorage.removeItem('impersonation');
       }
       setLoading(false);
     });
@@ -55,7 +53,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     return <Navigate to="/login" replace />;
   }
 
-  // Use the context role for route protection
   if (adminOnly && userRole !== 'ADMIN' && userRole !== 'DEV') {
     alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้'); // Alert for unauthorized admin access
     return <Navigate to="/" replace />;

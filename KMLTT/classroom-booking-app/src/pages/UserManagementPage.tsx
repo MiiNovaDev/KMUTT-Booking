@@ -3,15 +3,11 @@ import Navbar from '../components/Navbar';
 import type { User } from '../services/mockData';
 import { getUsers, updateUserRole } from '../services/api';
 import './AdminPage.css'; // Reusing admin styles
-import { useNavigate } from 'react-router-dom';
-import { getActiveUserContext } from '../utils/authUtils';
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const { role: currentUserRole } = getActiveUserContext();
 
   useEffect(() => {
     fetchUsers();
@@ -46,17 +42,6 @@ const UserManagementPage: React.FC = () => {
       console.error('Failed to update role:', err);
       alert('ไม่สามารถอัปเดตสิทธิ์ได้');
     }
-  };
-
-  const handleImpersonate = (user: User) => {
-    const impersonationData = {
-      uid: user.uid,
-      role: user.role,
-      studentId: user.studentId
-    };
-    sessionStorage.setItem('impersonation', JSON.stringify(impersonationData));
-    alert(`กำลังสวมสิทธิ์เป็น ${user.studentId}`);
-    navigate('/');
   };
 
   if (loading) {
@@ -99,7 +84,6 @@ const UserManagementPage: React.FC = () => {
                 <th>อีเมล</th>
                 <th>สิทธิ์ปัจจุบัน</th>
                 <th>เปลี่ยนสิทธิ์</th>
-                {currentUserRole === 'DEV' && <th>Dev Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -124,18 +108,6 @@ const UserManagementPage: React.FC = () => {
                       {user.role === 'DEV' && <option value="DEV">DEV</option>}
                     </select>
                   </td>
-                  {currentUserRole === 'DEV' && (
-                    <td>
-                      {user.role !== 'DEV' && (
-                        <button 
-                          className="btn btn-sm btn-outline-info"
-                          onClick={() => handleImpersonate(user)}
-                        >
-                          View as User
-                        </button>
-                      )}
-                    </td>
-                  )}
                 </tr>
               ))}
             </tbody>
