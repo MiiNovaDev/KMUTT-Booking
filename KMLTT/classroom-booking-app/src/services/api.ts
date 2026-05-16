@@ -258,7 +258,12 @@ export async function updateUserRole(uid: string, role: string) {
 }
 
 export async function getStats() {
-  const response = await fetch(`${API_BASE_URL}/admin/stats`);
+  const token = localStorage.getItem('userToken');
+  const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     console.error(`getStats failed: ${response.status} ${response.statusText}`, errorBody);
