@@ -5,6 +5,7 @@ import type { Room, Booking } from '../services/mockData';
 import './MyBookingsPage.css';
 import { getBookingDisplayInfo, sortBookings } from '../utils/bookingUtils'; 
 import { CalendarPlus } from 'react-bootstrap-icons';
+import { getActiveUserContext } from '../utils/authUtils';
 
 const MyBookingsPage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -12,11 +13,12 @@ const MyBookingsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
-  const userUid = localStorage.getItem('userUid') || '';
+  const { uid: userUid } = getActiveUserContext();
 
   useEffect(() => {
+    if (!userUid) return;
     setLoading(true);
-    
+
     // Subscribe to all rooms to get names
     const unsubscribeRooms = subscribeToRooms(setRooms);
 

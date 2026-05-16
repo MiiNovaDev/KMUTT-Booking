@@ -4,13 +4,14 @@ import type { User } from '../services/mockData';
 import { getUsers, updateUserRole } from '../services/api';
 import './AdminPage.css'; // Reusing admin styles
 import { useNavigate } from 'react-router-dom';
+import { getActiveUserContext } from '../utils/authUtils';
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const currentUserRole = localStorage.getItem('userRole');
+  const { role: currentUserRole } = getActiveUserContext();
 
   useEffect(() => {
     fetchUsers();
