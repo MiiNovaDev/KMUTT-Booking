@@ -108,7 +108,7 @@ const UserManagementPage: React.FC = () => {
                   <td>{user.email}</td>
                   <td>
                     <span className={`badge ${getBadgeClass(user.role)}`}>
-                      {user.role}
+                      {user.role === 'DEV' ? 'Developer' : user.role === 'ADMIN' ? 'Administrator' : 'User'}
                     </span>
                   </td>
                   <td>

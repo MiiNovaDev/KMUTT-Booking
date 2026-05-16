@@ -29,11 +29,17 @@ const Navbar: React.FC = () => {
     window.location.href = '/admin/users'; // Refresh to restore real role
   };
 
+  const getDisplayRole = (role: string) => {
+    if (role === 'DEV') return 'Developer';
+    if (role === 'ADMIN') return 'Administrator';
+    return 'User';
+  };
+
   return (
     <>
       {impersonatedData && (
         <div className="bg-warning text-dark text-center py-1 fw-bold">
-          คุณกำลังสวมสิทธิ์เป็น: {impersonatedData.studentId} ({impersonatedData.role})
+          คุณกำลังสวมสิทธิ์เป็น: {impersonatedData.studentId} ({getDisplayRole(impersonatedData.role)})
           <button 
             className="btn btn-sm btn-dark ms-3 py-0" 
             onClick={handleExitImpersonation}
